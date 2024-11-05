@@ -1,5 +1,5 @@
-Create database Seguimiento_hábitos
-Use Seguimiento_hábitos
+Create database Seguimiento_habitos
+Use Seguimiento_habitos
 go
 --//Usuario
 CREATE TABLE Usuario (
@@ -46,7 +46,7 @@ CREATE TABLE PreferenciasUsuario (
     preferencias_notificacion VARCHAR(100),
     FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario)
 );go
---//Hábito
+--//Hï¿½bito
 CREATE TABLE Habito (
     id_habito INT identity PRIMARY KEY,
     id_usuario INT,
@@ -107,14 +107,14 @@ CREATE TABLE DetallesRecordatorio (
     estado VARCHAR(20),
     FOREIGN KEY (id_recordatorio) REFERENCES Recordatorio(id_recordatorio)
 );go
---//Categoría de Hábito
+--//Categorï¿½a de Hï¿½bito
 CREATE TABLE CategoriaHabito (
     id_categoria INT identity PRIMARY KEY,
     nombre_categoria VARCHAR(50),
     descripcion_categoria TEXT,
     color_icono VARCHAR(50)
 );go
---//Estadísticas de Usuario
+--//Estadï¿½sticas de Usuario
 CREATE TABLE EstadisticasUsuario (
     id_estadistica INT identity PRIMARY KEY,
     id_usuario INT,
@@ -145,7 +145,7 @@ CREATE TABLE MiembrosGrupo (
     FOREIGN KEY (id_grupo) REFERENCES GrupoApoyo(id_grupo),
     FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario)
 );go
---//Revisión Personal
+--//Revisiï¿½n Personal
 CREATE TABLE RevisionPersonal (
     id_revision INT identity PRIMARY KEY,
     id_usuario INT,
@@ -160,7 +160,7 @@ CREATE TABLE DetallesRevision (
     notas_mejorar TEXT,
     FOREIGN KEY (id_revision) REFERENCES RevisionPersonal(id_revision)
 );go
---//Desafío
+--//Desafï¿½o
 CREATE TABLE Desafio (
     id_desafio INT identity PRIMARY KEY
 );
@@ -177,7 +177,7 @@ CREATE TABLE DetallesDesafio (
     estado VARCHAR(20),
     FOREIGN KEY (id_desafio) REFERENCES Desafio(id_desafio)
 );go
---//Suscripción
+--//Suscripciï¿½n
 CREATE TABLE Suscripcion (
     id_suscripcion INT identity PRIMARY KEY,
     id_usuario INT,
@@ -192,7 +192,7 @@ CREATE TABLE DetallesSuscripcion (
     estado_pago VARCHAR(20),
     FOREIGN KEY (id_suscripcion) REFERENCES Suscripcion(id_suscripcion)
 );go
---//Comentarios o Retroalimentación del Usuario
+--//Comentarios o Retroalimentaciï¿½n del Usuario
 CREATE TABLE Comentario (
     id_comentario INT identity PRIMARY KEY,
     id_usuario INT,
@@ -207,7 +207,7 @@ CREATE TABLE DetallesComentario (
     estado_comentario VARCHAR(20),
     FOREIGN KEY (id_comentario) REFERENCES Comentario(id_comentario)
 );go
---//Configuración del Usuario
+--//Configuraciï¿½n del Usuario
 CREATE TABLE ConfiguracionUsuario (
     id_configuracion INT identity PRIMARY KEY,
     id_usuario INT,
@@ -225,4 +225,4 @@ CREATE TABLE DetallesConfiguracion (
 );
 go
 
-select * database Seguimiento_hábitos
+select * database Seguimiento_habitos
