@@ -1,2 +1,3 @@
 <?php
-echo'Auth';
+
+echo "Hemos llegado al recurso AUTH";
