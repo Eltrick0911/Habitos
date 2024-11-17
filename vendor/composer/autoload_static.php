@@ -65,12 +65,13 @@ class ComposerStaticInite875ae8441d070d7dda5f4b47a2117aa
         ),
         'App\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/src',
+            0 => __DIR__ . '/../..' . '/Src',
         ),
     );
 
     public static $classMap = array (
-        'App\\Config\\responseHTTP' => __DIR__ . '/../..' . '/src/Config/responseHTTP.php',
+        'App\\Config\\errorlogs' => __DIR__ . '/../..' . '/Src/Config/errorlogs.php',
+        'App\\Config\\responseHTTP' => __DIR__ . '/../..' . '/Src/Config/responseHTTP.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Dotenv\\Dotenv' => __DIR__ . '/..' . '/vlucas/phpdotenv/src/Dotenv.php',

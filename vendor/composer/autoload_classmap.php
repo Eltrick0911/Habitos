@@ -6,7 +6,8 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'App\\Config\\responseHTTP' => $baseDir . '/src/Config/responseHTTP.php',
+    'App\\Config\\errorlogs' => $baseDir . '/Src/Config/errorlogs.php',
+    'App\\Config\\responseHTTP' => $baseDir . '/Src/Config/responseHTTP.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Dotenv\\Dotenv' => $vendorDir . '/vlucas/phpdotenv/src/Dotenv.php',
