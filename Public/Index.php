@@ -1,6 +1,29 @@
 <?php
-use App\Config\errorlogs;
-use App\Config\responseHTTP;
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Methods: POST, GET");
+header("Access-Control-Max-Age: 3600");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+
+include_once '../routes/routes.php';
+
+$requestMethod = $_SERVER["REQUEST_METHOD"];
+$path = explode('/', trim($_SERVER['PATH_INFO'],'/'));
+
+if ($requestMethod == 'GET' && $path[0] == 'login') {
+    include '../views/login.php';
+} elseif ($requestMethod == 'GET' && $path[0] == 'register') {
+    include '../views/register.php';
+} elseif ($requestMethod == 'GET' && $path[0] == 'dashboard') {
+    include '../views/Inicio.php';
+} else {
+    include '../routes/routes.php';
+}
+?
+
+<?php
+use App\config\errorlogs;
+use App\config\responseHTTP;
 require dirname(__DIR__).'/vendor/autoload.php';
 errorlogs::activa_error_logs();
 if(isset($_GET['route'])){
