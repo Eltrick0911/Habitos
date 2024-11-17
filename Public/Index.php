@@ -1,11 +1,6 @@
 <?php
-<<<<<<< HEAD
 use App\config\errorlogs;
 use App\config\responseHTTP;
-=======
-use App\Config\errorlogs;
-use App\Config\responseHTTP;
->>>>>>> 32f2ba5ade9aec091ca4bd5a4b8b683671606878
 require dirname(__DIR__).'/vendor/autoload.php';
 errorlogs::activa_error_logs();
 if(isset($_GET['route'])){
@@ -31,8 +26,4 @@ if(isset($_GET['route'])){
 }else{
     //la variable GET route no esta definida
     echo json_encode(responseHTTP::status404());
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 32f2ba5ade9aec091ca4bd5a4b8b683671606878
