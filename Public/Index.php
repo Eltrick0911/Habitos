@@ -1,6 +1,6 @@
 <?php
-use App\config\errorlogs;
-use App\config\responseHTTP;
+use App\Config\errorlogs;
+use App\Config\responseHTTP;
 require dirname(__DIR__).'/vendor/autoload.php';
 errorlogs::activa_error_logs();
 if(isset($_GET['route'])){
