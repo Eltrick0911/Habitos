@@ -1,4 +1,8 @@
 <?php
+use App\config\errorlogs;
+use App\config\responseHTTP;
+require dirname(__DIR__).'/vendor/autoload.php';
+errorlogs::activa_error_logs();
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST, GET");
@@ -14,7 +18,7 @@ if ($requestMethod == 'GET' && $path[0] == 'login') {
     include '../views/login.php';
 } elseif ($requestMethod == 'GET' && $path[0] == 'register') {
     include '../views/register.php';
-} elseif ($requestMethod == 'GET' && $path[0] == 'dashboard') {
+} elseif ($requestMethod == 'GET' && $path[0] == 'inicio') {
     include '../views/Inicio.php';
 } else {
     include '../routes/routes.php';

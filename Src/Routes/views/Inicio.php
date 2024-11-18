@@ -1,8 +1,11 @@
+
+
+
 <!DOCTYPE html>
 <html lang="en" >
 <head>
   <meta charset="UTF-8">
-  <title>CodePen - Healthcare Dashboard UI</title>
+  <title>CodePen - Healthcare Inicio UI</title>
   <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.4.1/css/all.css'><link rel="stylesheet" href="./styles.css">
 
 </head>
