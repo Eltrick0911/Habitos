@@ -1,29 +1,15 @@
 {
     "require": {
         "vlucas/phpdotenv": "^5.6",
-<<<<<<< HEAD
         "firebase/php-jwt": "^5.4",
         "paragonie/sodium_compat": "^2.1"
     },
     "autoload": { 
         "psr-4": {
             "App\\": "src"
-=======
-        "paragonie/sodium_compat": "^2.1"
-        
-    },
-    "autoload": { 
-        "psr-4": {
-            "App\\": "Src/"
->>>>>>> 32f2ba5ade9aec091ca4bd5a4b8b683671606878
         }
     },
     "config": {
         "optimize-autoloader": true
     }
-<<<<<<< HEAD
 }
-=======
-
-}
->>>>>>> 32f2ba5ade9aec091ca4bd5a4b8b683671606878

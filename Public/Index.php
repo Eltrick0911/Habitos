@@ -23,11 +23,9 @@ if ($requestMethod == 'GET' && $path[0] == 'login') {
 } else {
     include '../routes/routes.php';
 }
-?
 
-<?php
-use App\config\errorlogs;
-use App\config\responseHTTP;
+
+
 require dirname(__DIR__).'/vendor/autoload.php';
 errorlogs::activa_error_logs();
 if(isset($_GET['route'])){

@@ -1,12 +1,11 @@
 
 
-
 <!DOCTYPE html>
 <html lang="en" >
 <head>
   <meta charset="UTF-8">
   <title>CodePen - Healthcare Inicio UI</title>
-  <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.4.1/css/all.css'><link rel="stylesheet" href="./styles.css">
+  <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.4.1/css/all.css'><link rel="stylesheet" href="../../../Public/ccs/style_old.css">
 
 </head>
 <body>
@@ -215,7 +214,7 @@
             </div>
         </main>
     </div>
-    <script src="./js/main.js"></scripts>
+    <script src="../../../Public/js/script_old.js"></scripts>
 <!-- partial -->
   <script src='https://cdn.jsdelivr.net/npm/chart.js@2.8.0'></script>
 <script src='https://cdn.jsdelivr.net/npm/chartjs-plugin-deferred@1.0.1'></script>

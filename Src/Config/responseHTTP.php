@@ -9,8 +9,8 @@ Class responseHTTP{
        'data'=>''
     );
     final public static function status200(string $res){
-        self::$mensajee['status']= '200';
-        self::$mensajee['status']= $res;
+        self::$mensaje['status']= '200';
+        self::$mensaje['status']= $res;
         http_response_code(200);
         
     }
