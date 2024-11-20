@@ -1,11 +1,13 @@
 <?php
+require '../../vendor/autoload.php';
 use App\config\errorlogs;
 use App\Config\responseHTTP;
 use App\db\connectionDB;
+
 /* cargamos nuestras variables de entorno de nuestra conexion a BD*/
 
-$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__),2);
-$dotenv->load();
+$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__, 2))->load();
+
 
 $data = array(
     "user" => $_ENV['USER'],

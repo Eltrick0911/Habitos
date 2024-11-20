@@ -1,12 +1,24 @@
 <?php
-include_once '../app/config/Database.php';
+require_once 'dataDB.php';
+require '../../vendor/autoload.php';
+use App\db\connectionDB;
 
-$database = new Database();
-$db = $database->getConnection();
+// Suponiendo que dataDB.php contiene constantes para las credenciales
+// y connectionDB.php tiene una función getConnection()
 
-if ($db) {
-    echo "Conexión exitosa a la base de datos";
-} else {
-    echo "Conexión fallida";
+try {
+    $db = new connectionDB();
+    $conn = $db->getConnection();
+
+    // Ejecutar una consulta simple para verificar la conexión
+    $stmt = $conn->query("SELECT * FROM Usuario");
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($result) {
+        echo "Conexión exitosa. Se encontraron " . count($result) . " registros.";
+    } else {
+        echo "No se encontraron registros.";
+    }
+} catch (PDOException $e) {
+    echo "Error de conexión: " . $e->getMessage();
 }
-?>
