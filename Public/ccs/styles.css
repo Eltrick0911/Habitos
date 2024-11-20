@@ -8,16 +8,16 @@ body {
     margin: 0;
 }
 
-.login-container, .dashboard-container {
+.container { /* Cambia .login-container por .container */
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 300px;
+    width: 300px; 
     text-align: center;
 }
 
-h2 {
+h1 { /* Agrega estilo para h1 */
     margin-bottom: 20px;
 }
 
@@ -31,7 +31,9 @@ label {
     margin-bottom: 5px;
 }
 
-input {
+input, 
+select, /* Agrega estilo para select */
+textarea { /* Agrega estilo para textarea */
     width: 100%;
     padding: 8px;
     box-sizing: border-box;
