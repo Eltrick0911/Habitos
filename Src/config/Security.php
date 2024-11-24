@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Config; //nombre de espacios
+namespace App\config; //nombre de espacios
 
 use Dotenv\Dotenv; //variables de entorno https://github.com/vlucas/phpdotenv 
 use Firebase\JWT\JWT; //para generar nuestro JWT https://github.com/firebase/php-jwt
@@ -55,7 +55,7 @@ class Security {
         
         //creamos el JWT recibe varios parametros pero nos interesa el payload y la key en el metodo encode de JWT
         $jwt = JWT::encode($payload,$key);
-        print_r($jwt);
+       // print_r($jwt);
         return $jwt;
     }
 
@@ -67,7 +67,7 @@ class Security {
         //buscaremos la cabecera Autorization, sino existe la detiene y manda un mensaje de error
         if (!isset(getallheaders()['Authorization'])) {
             //echo "El token de acceso en requerido";
-            die(json_encode(ResponseHttp::status400()));            
+            die(json_encode(ResponseHttp::status400('')));            
             exit;
         }
         try {

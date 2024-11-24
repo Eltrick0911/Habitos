@@ -78,10 +78,12 @@ class ComposerStaticInite875ae8441d070d7dda5f4b47a2117aa
     );
 
     public static $classMap = array (
-        'App\\Config\\Security' => __DIR__ . '/../..' . '/src/Config/Security.php',
-        'App\\Config\\errorlogs' => __DIR__ . '/../..' . '/src/Config/errorlogs.php',
-        'App\\Config\\responseHTTP' => __DIR__ . '/../..' . '/src/Config/responseHTTP.php',
+        'App\\config\\Security' => __DIR__ . '/../..' . '/src/config/Security.php',
+        'App\\config\\errorlogs' => __DIR__ . '/../..' . '/src/config/errorlogs.php',
+        'App\\config\\responseHTTP' => __DIR__ . '/../..' . '/src/config/responseHTTP.php',
         'App\\db\\connectionDB' => __DIR__ . '/../..' . '/src/db/connectionDB.php',
+        'App\\db\\sql' => __DIR__ . '/../..' . '/src/db/sql.php',
+        'App\\models\\userModel' => __DIR__ . '/../..' . '/src/models/userModel.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Dotenv\\Dotenv' => __DIR__ . '/..' . '/vlucas/phpdotenv/src/Dotenv.php',

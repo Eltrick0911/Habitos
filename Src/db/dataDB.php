@@ -7,7 +7,7 @@ use App\db\connectionDB;
 /* cargamos nuestras variables de entorno de nuestra conexion a BD*/
 
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__, 2))->load();
-
+errorlogs::activa_error_logs();
 
 $data = array(
     "user" => $_ENV['USER'],

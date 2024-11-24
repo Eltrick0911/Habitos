@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Config;
+namespace App\config;
 
 Class responseHTTP{
     public static $mensaje = array(

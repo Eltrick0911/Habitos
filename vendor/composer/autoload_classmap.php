@@ -6,10 +6,12 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'App\\Config\\Security' => $baseDir . '/src/Config/Security.php',
-    'App\\Config\\errorlogs' => $baseDir . '/src/Config/errorlogs.php',
-    'App\\Config\\responseHTTP' => $baseDir . '/src/Config/responseHTTP.php',
+    'App\\config\\Security' => $baseDir . '/src/config/Security.php',
+    'App\\config\\errorlogs' => $baseDir . '/src/config/errorlogs.php',
+    'App\\config\\responseHTTP' => $baseDir . '/src/config/responseHTTP.php',
     'App\\db\\connectionDB' => $baseDir . '/src/db/connectionDB.php',
+    'App\\db\\sql' => $baseDir . '/src/db/sql.php',
+    'App\\models\\userModel' => $baseDir . '/src/models/userModel.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Dotenv\\Dotenv' => $vendorDir . '/vlucas/phpdotenv/src/Dotenv.php',
