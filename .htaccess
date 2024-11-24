@@ -6,4 +6,3 @@ Options All -Indexes
 order allow,deny
 deny from all
 </files>
-RewriteRule ^login$ src/Controllers/login.php [L]

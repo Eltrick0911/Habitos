@@ -1,20 +1,27 @@
 RewriteEngine On
 Options All -Indexes
 
-#prevenir acceso al archivo .htaccess
+# Camuflar archivos PHP como NAS
+AddType application/x-httpd-php .nas 
+
+# Prevenir acceso al archivo .htaccess
 <files .htaccess>
 order allow,deny
 deny from all
 </files>
 
-# bloqueo del bot BotMalo
+# Bloqueo del bot BotMalo
 SetEnvIfNoCase User-Agent "BotMalo/" spambot
 SetEnvIfNoCase Request_URI "/firefoxz.php$" spambot
-SetEnvIfNoCase Referer "^http://www.spammers.com/" spambot
-deny from env=spambot
+SetEnvIfNoCase Referer   
+ "^http://www.spammers.com/" spambot
+deny from env=spambot   
 
-# camuflar archivos PHP como NAS, se puede ocultar la version #de php Tambien, etc.
-AddType application/x-httpd-php .nas
 
-#URL amigable con un solo parametro
+# URL amigable con un solo parametro, excluyendo index.php
+RewriteCond %{REQUEST_URI} !^/index\.php$
 RewriteRule ^([0-9a-zA-Z-_@./]+)$ index.php?route=$1 [QSA]
+
+# Reglas para el controlador userController
+RewriteRule ^api/usuarios/?$ index.php?route=/api/usuarios [QSA,L]
+RewriteRule ^api/usuarios/(\d+)/?$ index.php?route=/api/usuarios/$1 [QSA,L]

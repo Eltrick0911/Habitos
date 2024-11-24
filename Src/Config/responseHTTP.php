@@ -9,11 +9,12 @@ Class responseHTTP{
        'data'=>''
     );
     final public static function status200(string $res){
-        self::$mensaje['status']= '200';
-        self::$mensaje['status']= $res;
-        http_response_code(200);
-        
+        self::$mensaje['status']= 'OK';
+        self::$mensaje['message']= $res; 
+        http_response_code(200);  
+        return self::$mensaje; // Agregar esta línea para devolver el array
     }
+
     final public static function status201(){
         $res = 'Recurso creado exitosamente!';
         http_response_code(201);
