@@ -3,30 +3,28 @@ use App\config\errorlogs;
 use App\config\responseHTTP;
 require dirname(__DIR__).'/vendor/autoload.php';
 errorlogs::activa_error_logs();
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST, GET");
-header("Access-Control-Max-Age: 3600");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+if(isset($_GET['route'])){
+    $url = explode('/',$_GET['route']); 
+    $lista = ['auth', 'user']; // lista de rutas permitidas
+	$file = dirname(__DIR__).'/src/routes/'.$url[0].'.php';
+    if(!in_array($url[0], $lista)){
+        //LA ruta no existe
+        echo json_encode(responseHTTP::status400());
+        error_log('Esto es una prueba de un error');
+        exit; //finalizamos la ejecución
+    } 
 
-$requestMethod = $_SERVER["REQUEST_METHOD"];
-$path = explode('/', trim($_SERVER['REQUEST_URI'],'/'));
+    //validamos que el archivo exista y que es legible
+    if(!file_exists($file) || !is_readable($file)){
+        //El archivo no existe o no es legible
+        echo json_encode(responseHTTP::status400());
+    }else{
+        //echo $file;
+        require $file;
+        exit;
+    }
 
-// Eliminar la primera parte de la ruta si es "Habitos"
-if ($path[0] == 'Habitos') {
-    array_shift($path); 
-}
-
-if ($requestMethod == 'GET' && $path[0] == 'login') {
-    include 'src/Routes/views/login.html'; 
-} elseif ($requestMethod == 'POST' && $path[0] == 'login') {
-    // Incluir el archivo login.php para manejar el login
-    require_once __DIR__ . '/src/Controllers/login.php'; 
-} elseif ($requestMethod == 'GET' && $path[0] == 'register') {
-    include 'src/Routes/views/register.html';
-} elseif ($requestMethod == 'GET' && $path[0] == 'inicio') {
-    include 'src/Routes/views/index.html'; 
-} else {
-    http_response_code(404);
-    echo "Página no encontrada";
+}else{
+    //la variable GET route no esta definida
+    echo json_encode(responseHTTP::status404());
 }

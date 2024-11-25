@@ -81,6 +81,7 @@ class ComposerStaticInite875ae8441d070d7dda5f4b47a2117aa
         'App\\config\\Security' => __DIR__ . '/../..' . '/src/config/Security.php',
         'App\\config\\errorlogs' => __DIR__ . '/../..' . '/src/config/errorlogs.php',
         'App\\config\\responseHTTP' => __DIR__ . '/../..' . '/src/config/responseHTTP.php',
+        'App\\controllers\\userController' => __DIR__ . '/../..' . '/src/controllers/userController.php',
         'App\\db\\connectionDB' => __DIR__ . '/../..' . '/src/db/connectionDB.php',
         'App\\db\\sql' => __DIR__ . '/../..' . '/src/db/sql.php',
         'App\\models\\userModel' => __DIR__ . '/../..' . '/src/models/userModel.php',

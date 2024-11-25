@@ -9,6 +9,7 @@ return array(
     'App\\config\\Security' => $baseDir . '/src/config/Security.php',
     'App\\config\\errorlogs' => $baseDir . '/src/config/errorlogs.php',
     'App\\config\\responseHTTP' => $baseDir . '/src/config/responseHTTP.php',
+    'App\\controllers\\userController' => $baseDir . '/src/controllers/userController.php',
     'App\\db\\connectionDB' => $baseDir . '/src/db/connectionDB.php',
     'App\\db\\sql' => $baseDir . '/src/db/sql.php',
     'App\\models\\userModel' => $baseDir . '/src/models/userModel.php',

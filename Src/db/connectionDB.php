@@ -1,12 +1,8 @@
 <?php
-
 namespace App\db;
-
 use App\config\responseHTTP;
 use PDO;
-
 require '../../vendor/autoload.php';
-
 class connectionDB {
     private static $host;
     private static $user;

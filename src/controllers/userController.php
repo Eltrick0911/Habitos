@@ -10,26 +10,7 @@ class userController{
     private $data;
     private $headers; 
 
-    //atributos de usuario 
-    //atributos con expresion regular:
-    /*
-    - toda expresion regular empieza con ^
-    - toda expresion regular termina con $
-    - \d: cualquier digito
-    - \D: cualquier caracter que no sea un digito
-    - \w: cualquier caracter que sea una letra o un digito
-    - \W: cualquier caracter que no sea una letra o un digito
-    - \s: cualquier caracter que sea un espacio en blanco
-    - \S: cualquier caracter que no sea un espacio en blanco
-    -  [a-zA-Z] se refiere a que el atributo puede tomar cualquier caracter que sea
-    - [a-zA-Z0-9] se refiere a que el atributo puede tomar caracter o numero
-    - El signo mas(+) indica que cualquiera de los valores puede ser tomado del rango especificado
-    Considerando lo anterior 
-    [1,2,3] se refiere a que el atributo puede tomar cualquiera de estos tres valores 1,2 o 3
-    {1,1} se refiere a que como minimo tendra 1 y maximo tendra 1
 
-    
-    */
     private static $validar_rol = '/^[1,2,3]{1,1}$/'; //validamos el rol (1 = "", 2="", 3="")
     private static $validar_numero = '/^[0-9]+$/'; //validamos numeros (0-9)
     private static $validar_texto = '/^[a-zA-Z]+$/'; //validamos texto (a-z y A-Z)
@@ -41,15 +22,7 @@ class userController{
         $this->data = $data;
         $this->headers = $headers;            
     }
-    //esta forma de poder inicializar un objeto solo se puede en PHP8 
-    //directamente definir los argumentos en el constructor e inicializarlos 
-    /*public function __construct(
-        private string $method,
-        private string $route,
-        private string $params,
-        private $data,
-        private $headers
-    ){}*/
+ 
         //metodo que recibe un endpoint (ruta a un recurso)
     final public function post($endpoint){
         //validamos method y endpoint 
