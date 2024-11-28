@@ -45,3 +45,38 @@ Stack trace:
 [24-Nov-2024 20:37:38 America/Tegucigalpa] Conexión exitosa
 [24-Nov-2024 20:37:38 America/Tegucigalpa] Conexión exitosa
 [24-Nov-2024 20:37:38 America/Tegucigalpa] Conexión exitosa
+[27-Nov-2024 20:45:22 America/Tegucigalpa] Conexión exitosa
+[27-Nov-2024 20:45:22 America/Tegucigalpa] PHP Fatal error:  Uncaught Error: Class "Usuario" not found in C:\xampp\htdocs\Habitos\Src\db\test_connection.php:22
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\Habitos\Src\db\test_connection.php on line 22
+[27-Nov-2024 20:45:49 America/Tegucigalpa] Conexión exitosa
+[27-Nov-2024 20:45:49 America/Tegucigalpa] PHP Fatal error:  Uncaught Error: Class "Usuario" not found in C:\xampp\htdocs\Habitos\Src\db\test_connection.php:22
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\Habitos\Src\db\test_connection.php on line 22
+[27-Nov-2024 21:27:23 America/Tegucigalpa] Conexión exitosa
+[27-Nov-2024 21:27:23 America/Tegucigalpa] PHP Fatal error:  Uncaught Error: Class "Usuario" not found in C:\xampp\htdocs\Habitos\Src\db\test_connection.php:22
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\Habitos\Src\db\test_connection.php on line 22
+[27-Nov-2024 21:27:46 America/Tegucigalpa] Conexión exitosa
+[27-Nov-2024 21:27:46 America/Tegucigalpa] PHP Fatal error:  Uncaught Error: Class "Usuario" not found in C:\xampp\htdocs\Habitos\Src\db\test_connection.php:22
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\Habitos\Src\db\test_connection.php on line 22
+[27-Nov-2024 21:28:01 America/Tegucigalpa] Conexión exitosa
+[27-Nov-2024 21:28:01 America/Tegucigalpa] PHP Fatal error:  Uncaught Error: Class "Usuario" not found in C:\xampp\htdocs\Habitos\Src\db\test_connection.php:22
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\Habitos\Src\db\test_connection.php on line 22
+[27-Nov-2024 21:28:02 America/Tegucigalpa] Conexión exitosa
+[27-Nov-2024 21:28:02 America/Tegucigalpa] PHP Fatal error:  Uncaught Error: Class "Usuario" not found in C:\xampp\htdocs\Habitos\Src\db\test_connection.php:22
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\Habitos\Src\db\test_connection.php on line 22
+[27-Nov-2024 21:45:58 America/Tegucigalpa] Conexión exitosa
+[27-Nov-2024 21:45:58 America/Tegucigalpa] PHP Fatal error:  Uncaught Error: Class "Usuario" not found in C:\xampp\htdocs\Habitos\Src\db\test_connection.php:23
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\Habitos\Src\db\test_connection.php on line 23

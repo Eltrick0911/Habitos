@@ -1,7 +1,7 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
-require_once("../includes/clases/clase_usuario.php");
+
 require_once 'dataDB.php';
 require '../../vendor/autoload.php';
 use App\db\connectionDB;

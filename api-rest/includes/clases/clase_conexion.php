@@ -5,7 +5,7 @@ class clase_conexion {
     protected $database_host = "localhost";
     protected $database_name = "seguimientohabitos";
     protected $database_user = "root";
-    protected $database_pass = "";
+    protected $database_pass = "252411";
     
     public function __construct(){
     }    

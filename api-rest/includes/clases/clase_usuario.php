@@ -2,6 +2,22 @@
 require_once("../includes/clases/clase_conexion.php");
 
 class usuario{
+    // Método para obtener todos los usuarios
+    public static function getTodosUsuarios() {
+        $db = new clase_conexion();
+        $con = $db->abrirConexion();
+        $stmt = $con->prepare('SELECT * FROM usuario');
+        $stmt->execute();
+        return $stmt;
+    }
+
+    public static function getUsuario($id_Usuario){
+        $db = new clase_conexion();
+        $con = $db->abrirConexion();
+        $stmt = $con->prepare('SELECT * FROM usuario WHERE id_usuario=?');
+        $stmt->execute([$id_Usuario]);        
+        return ($stmt);       
+    }
     public static function crear_usuario($nombre, $apellidos, $correo_electronico, $contrasena, $fecha_nacimiento, $genero, $pais_region, $nivel_suscripcion, $preferencias_notificacion) {
         $db = new clase_conexion();
         $con = $db->abrirConexion();
@@ -15,13 +31,7 @@ class usuario{
         return $stmt;
     }
 
-    public static function getusiario($id_Usuario){
-        $db = new clase_conexion();
-        $con = $db->abrirConexion();
-        $stmt = $con->prepare('SELECT * FROM usuario WHERE id_usuario=?');
-        $stmt->execute([$id_Usuario]);        
-        return ($stmt);       
-    }
+   
 
     public static function existeUsuario($correo_electronico) {
         $db = new clase_conexion();
