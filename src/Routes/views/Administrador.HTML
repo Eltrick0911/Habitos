@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Panel de Administrador</title>
+  <link rel="stylesheet" href="../../../Public/ccs/admin.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+</head>
+<body>
+  <header> 
+    <img id="logo" src="../../Img/Logo3.PNG" alt="Logo"> 
+    <h1>Panel de Administrador</h1>
+  </header>
+
+  <div class="container">
+
+    <div class="dashboard">
+      <div class="card" id="usuariosCard">
+        <h2>Usuarios</h2>
+        <p id="totalUsuarios">Cargando...</p>
+        <ul id="listaUsuarios"></ul>
+      </div>
+
+      <div class="card" id="habitosCard">
+        <h2>Hábitos</h2>
+        <p id="totalHabitos">Cargando...</p>
+        <ul id="listaHabitos"></ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="contenidoDinamico"></div> <script src="../../../Public/js/admin.js"></script>
+</body>
+</html>

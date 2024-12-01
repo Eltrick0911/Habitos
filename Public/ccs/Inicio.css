@@ -2,47 +2,65 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #6c6de3;
-}
-header {
+    background: whitesmoke;
+  }
+  
+  header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 10px 20px;
     background-color: #8587d6;
     color: white;
-}
-a {
+    position: fixed; /* Añadido */
+    top: 0; /* Posición desde arriba */
+    left: 0; /* Posición desde la izquierda */
+    width: 99%; /* Ancho del header */
+    z-index: 100; /* Asegurar que el header esté encima del contenido */
+  }
+  
+  a {
     text-decoration: none
-}
-header img {
+  }
+  
+  header img {
     height: 80px;
-}
-header nav {
+  }
+  
+  header nav {
     display: flex;
     gap: 10px;
-}
-header nav button {
+  }
+  
+  header nav button {
     background-color: #cca3f3cb;
-    color: rgb(151, 120, 221);
+    color: rgb(0, 0, 0);
     border: none;
     padding: 10px 15px;
     cursor: pointer;
     border-radius: 5px;
     font-size: 16px;
-}
-header nav button:hover {
+    width: 45%;
+  }
+  
+  header nav button:hover {
     background-color: #bc6ceb;
-}
-main {
+    
+  }
+  
+  main {
     padding: 20px;
     text-align: center;
-}
+  }
+  
 .info {
-    max-width: 800px;
-    margin: 20px auto;
-    background-color: #d6b6f3cb;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: absolute; /* Añadido */
+  top: 50%; /* Mantener la posición vertical original */
+  left: 50%; /* Mantener la posición horizontal original */
+  transform: translate(-50%, -50%); /* Centrar el div */
+  max-width: 800px;
+  background-color: #d6b6f3cb;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }

@@ -9,7 +9,7 @@ body {
 }
 
 .container { /* Cambia .login-container por .container */
-    background-color: #fff;
+    background-color:#9395ed;;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -44,7 +44,7 @@ textarea { /* Agrega estilo para textarea */
 button {
     width: 100%;
     padding: 10px;
-    background-color: #007bff;
+    background: linear-gradient(90deg, #9395ed 0%, #6c6de3 100%);
     border: none;
     border-radius: 4px;
     color: #fff;
