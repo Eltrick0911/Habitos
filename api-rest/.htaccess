@@ -1,0 +1,16 @@
+#RewriteEngine On
+
+# Reescritura de URL para acceder a los archivos PHP en la carpeta api
+#RewriteRule ^api/([^/]+)/?$ api/$1.php [L]
+
+# Reescritura de URL para acceder a métodos específicos dentro de los archivos PHP
+#RewriteRule ^api/([^/]+)/([^/]+)/?$ api/$1.php?metodo=$2 [QSA,L]
+
+# Bloquear el acceso directo a la carpeta includes
+RewriteRule ^includes/ - [F,L]
+
+# Bloquear el acceso a archivos .htaccess
+#<Files .htaccess>
+#order allow,deny
+#deny from all
+#</Files>

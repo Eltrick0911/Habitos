@@ -5,36 +5,34 @@ header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-include "../includes/clases/clase_usuario.php";
+include_once "../includes/clases/clase_usuario.php"; // Incluir la clase usuario
+require_once "../includes/clases/clase_conexion.php"; // Incluir la clase de conexión
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Obtener los datos de la solicitud POST
     $data = json_decode(file_get_contents("php://input"), true);
 
+    // Validar que todos los campos requeridos estén presentes
     if (isset($data['nombre']) && isset($data['apellidos']) && isset($data['correo_electronico']) && isset($data['contrasena']) && isset($data['fecha_nacimiento']) && isset($data['genero']) && isset($data['pais_region']) && isset($data['nivel_suscripcion']) && isset($data['preferencias_notificacion'])) {
 
-        $usuario = new Usuario();
-        $correo_electronico = $data['correo_electronico'];
-        $num = $usuario->existeUsuario($correo_electronico);
+        try {
+            // Crear una instancia de la clase usuario
+            $usuario = new usuario();
 
-        if ($num != 0) {
-            header('HTTP/1.1 404 El registro ya existe en la BD!');
-            echo json_encode(["error" => "El registro ya existe en la BD!"]);
-        } else {
-            try {
-                // Crear el usuario
-                $usuario->crear_usuario(
-                    $data['nombre'], 
-                    $data['apellidos'], 
-                    $data['correo_electronico'], 
-                    $data['contrasena'], 
-                    $data['fecha_nacimiento'], 
-                    $data['genero'], 
-                    $data['pais_region'], 
-                    $data['nivel_suscripcion'], 
-                    $data['preferencias_notificacion']
-                );
+            // Llamar al método crear_usuario de la clase
+            $resultado = $usuario->crear_usuario(
+                $data['nombre'], 
+                $data['apellidos'], 
+                $data['correo_electronico'], 
+                $data['contrasena'], 
+                $data['fecha_nacimiento'], 
+                $data['genero'], 
+                $data['pais_region'], 
+                $data['nivel_suscripcion'], 
+                $data['preferencias_notificacion']
+            );
 
+            if ($resultado) {
                 // Obtener el objeto PDO de conexión a la base de datos
                 $db = new clase_conexion();
                 $con = $db->abrirConexion();
@@ -48,12 +46,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 header('HTTP/1.1 201 El usuario se registró exitosamente!');
                 echo json_encode(["message" => "El usuario se registró exitosamente!"]);
-
-            } catch (PDOException $e) {
+            } else {
                 header('HTTP/1.1 500 Error al registrar el usuario!');
-                echo json_encode(["error" => "Error al registrar el usuario: " . $e->getMessage()]);
+                echo json_encode(["error" => "Error al registrar el usuario."]); 
             }
+        } catch (Exception $e) {
+            header('HTTP/1.1 500 Error al registrar el usuario!');
+            echo json_encode(["error" => "Error al registrar el usuario: " . $e->getMessage()]);
         }
+
     } else {
         header('HTTP/1.1 400 Faltan datos en la solicitud!');
         echo json_encode(["error" => "Faltan datos en la solicitud!"]);

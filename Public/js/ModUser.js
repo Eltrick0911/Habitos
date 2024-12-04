@@ -1,54 +1,58 @@
-document.getElementById('usuarioForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-  
-    // Obtener los valores de los campos del formulario
-    let nombre = document.getElementById('nombre').value;
-    let apellidos = document.getElementById('apellidos').value;
-    let correoElectronico = document.getElementById('correo_electronico').value;
-    let contrasena = document.getElementById('contrasena').value;
-    let fechaNacimiento = document.getElementById('fecha_nacimiento').value;
-    let genero = document.getElementById('genero').value;
-    let paisRegion = document.getElementById('pais_region').value;
-    let nivelSuscripcion = document.getElementById('nivel_suscripcion').value;
-    let preferenciasNotificacion = document.getElementById('preferencias_notificacion').value;
-  
-    // Validaciones
-    let isValid = true;
-  
-    // Validar nombre (requerido y solo letras)
-    if (nombre.trim() === "" || !/^[a-zA-Z]+$/.test(nombre)) {
-      alert("Por favor, ingresa un nombre válido (solo letras).");
-      isValid = false;
-    }
-  
-    // Validar apellidos (requerido y solo letras)
-    if (apellidos.trim() === "" || !/^[a-zA-Z]+$/.test(apellidos)) {
-      alert("Por favor, ingresa apellidos válidos (solo letras).");
-      isValid = false;
-    }
-  
-    // Validar correo electrónico (requerido y formato válido)
-    if (correoElectronico.trim() === "" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correoElectronico)) {
+$(document).ready(function() {
+  // Manejar el envío del formulario
+  $("#loginForm").submit(function(event) {
+    event.preventDefault(); // Evitar que el formulario se envíe de forma tradicional
+
+    // Obtener los valores del formulario
+    var email = $("#email").val();
+    var password = $("#password").val();
+
+    // Validar el formulario (puedes agregar más validaciones si es necesario)
+    if (email.trim() === "" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       alert("Por favor, ingresa un correo electrónico válido.");
-      isValid = false;
+      return false;
     }
-  
-    // Validar contraseña (opcional, pero al menos 6 caracteres si se ingresa)
-    if (contrasena.trim() !== "" && contrasena.length < 6) {
-      alert("La contraseña debe tener al menos 6 caracteres.");
-      isValid = false;
+
+    if (password.trim() === "") {
+      alert("Por favor, ingresa tu contraseña.");
+      return false;
     }
-  
-    // Validar fecha de nacimiento (opcional, pero formato válido si se ingresa)
-    if (fechaNacimiento.trim() !== "" && !/^\d{4}-\d{2}-\d{2}$/.test(fechaNacimiento)) {
-      alert("Por favor, ingresa una fecha de nacimiento válida (YYYY-MM-DD).");
-      isValid = false;
-    }
-  
-    // Si todas las validaciones son correctas, enviar el formulario
-    if (isValid) {
-      // Aquí iría el código para enviar el formulario al servidor (fetch o AJAX)
-      // ...
-      alert("Formulario enviado correctamente.");
-    }
+
+    // Crear un objeto con los datos del formulario
+    var datos = {
+      email: email,
+      password: password
+    };
+
+    // Realizar la petición AJAX
+    $.ajax({
+      url: '../api_rest/api/procesar_login.php',
+      type: 'POST',
+      data: datos, // Enviar los datos como datos de formulario
+      success: function(response) {
+        // Manejar la respuesta del servidor
+        try {
+          var respuesta = JSON.parse(response); // Intentar analizar la respuesta como JSON
+
+          if (respuesta.hasOwnProperty('error')) {
+            // Mostrar mensaje de error
+            alert(respuesta.error);
+          } else {
+            // Redirigir al usuario según su rol
+            if (respuesta.tipo_usuario === 'admin') {
+              window.location.href = '/Habitos/src/Routes/views/admin.html';
+            } else {
+              window.location.href = '/Habitos/src/Routes/views/index.html';
+            }
+          }
+        } catch (error) {
+          // Si la respuesta no es JSON, mostrarla como texto
+          alert(response);
+        }
+      },
+      error: function() {
+        alert("Error al enviar el formulario.");
+      }
+    });
   });
+});
