@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-12-2024 a las 21:16:21
+-- Tiempo de generación: 05-12-2024 a las 05:42:21
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -610,7 +610,9 @@ INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES
 (7, 7, 'admin'),
 (8, 8, 'usuario'),
 (9, 9, 'usuario'),
-(10, 10, 'admin');
+(10, 10, 'admin'),
+(12, 20, 'admin'),
+(13, 21, 'usuario');
 
 -- --------------------------------------------------------
 
@@ -647,7 +649,16 @@ INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`
 (7, 'Jorge', 'González', 'jorge.gonzalez@example.com', 'password123', '1987-12-30', 'Masculino', 'Uruguay', '2024-11-23 21:28:38', 'gratuita', '0000-00-00 00:00:00', 'correo'),
 (8, 'Sofía', 'Ramírez', 'sofia.ramirez@example.com', 'password123', '1993-04-18', 'Femenino', 'Paraguay', '2024-11-23 21:28:38', 'premium', '0000-00-00 00:00:00', 'push'),
 (9, 'Miguel', 'Fernández', 'miguel.fernandez@example.com', 'password123', '1990-06-22', 'Masculino', 'Bolivia', '2024-11-23 21:28:38', 'gratuita', '0000-00-00 00:00:00', 'correo'),
-(10, 'Elena', 'Torres', 'elena.torres@example.com', 'password123', '1989-08-14', 'Femenino', 'Ecuador', '2024-11-23 21:28:38', 'premium', '0000-00-00 00:00:00', 'push');
+(10, 'Elena', 'Torres', 'elena.torres@example.com', 'password123', '1989-08-14', 'Femenino', 'Ecuador', '2024-11-23 21:28:38', 'premium', '0000-00-00 00:00:00', 'push'),
+(11, 'Prueba', 'HTML', 'qs@gmail.com', 'Prueba1@', '2024-12-01', 'masculino', 'Honduras', '2024-12-04 20:23:52', 'gratuita', NULL, 'Push'),
+(12, 'Pruebas', 'HTML', 'qs2@gmail.com', 'Prueba2@', '2024-12-03', 'femenino', 'Honduras', '2024-12-04 20:43:23', 'gratuita', NULL, 'Push'),
+(14, 'Prue', 'HT', 'as2@gmail.com', 'Prueba1@', '2024-12-01', 'masculino', 'Honduras', '2024-12-04 20:45:15', 'gratuita', NULL, 'Push'),
+(15, 'Pa', 'Ca', 'c@gmail.com', 'cajon1@', '2024-12-01', 'masculino', 'Austria', '2024-12-04 21:06:30', 'premium', NULL, 'No'),
+(16, 'ps', 'ba', 'sa@gmail.com', 'sdfaa@1', '2024-12-01', 'femenino', 'México', '2024-12-04 21:09:56', 'gratuita', NULL, 'No'),
+(17, 'psa', 'bas', 'swa@gmail.com', '$2y$10$odRykWTh6UD1L/8ia73huOmVk7EKyOMmWlN/OtwNraNKKrnu6d37O', '2024-11-11', 'masculino', 'México', '2024-12-04 21:29:18', 'gratuita', NULL, 'No'),
+(18, 'admin', 'istrador', 'admin@gmail.com', '$2y$10$4jRt3k3Y6eVxQa37mqfo6enMIR93O5hoV6bfsQC40Eum2fDnZCprq', '2024-12-04', 'otro', 'Honduras', '2024-12-04 22:12:01', 'gratuita', NULL, 'No'),
+(20, 'admina', 'istrador', 'admin2@gmail.com', '$2y$10$m9h3JP/bpNI4cZSBnC1RR.d9/dV8S.2phzexCvJgsHAPeRtmgPxuO', '2024-12-01', 'otro', 'Honduras', '2024-12-04 22:16:17', 'gratuita', NULL, 'No'),
+(21, 'usuario', 'Normal', 'un@gmail.com', '$2y$10$0mNG2zbHLh0xwdp8ge.G9O7t5tsDenFo6RS1.H/n5m4ZdpWgwRP/q', '2024-12-04', 'otro', 'Honduras', '2024-12-04 22:26:29', 'gratuita', NULL, 'No');
 
 -- --------------------------------------------------------
 
@@ -934,13 +945,13 @@ ALTER TABLE `suscripcion`
 -- AUTO_INCREMENT de la tabla `tipos_usuario`
 --
 ALTER TABLE `tipos_usuario`
-  MODIFY `id_tipo_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_tipo_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario_habito`
