@@ -6,7 +6,7 @@ class habitos {
     public static function getTodosHabitos() {
         $db = new clase_conexion();
         $con = $db->abrirConexion();
-        $stmt = $con->prepare('SELECT * FROM Habito');
+        $stmt = $con->prepare('CALL ObtenerTodosHabitos()');
         $stmt->execute();
         return $stmt;
     }
@@ -15,7 +15,7 @@ class habitos {
     public static function getHabito($id_habito) {
         $db = new clase_conexion();
         $con = $db->abrirConexion();
-        $stmt = $con->prepare('SELECT * FROM Habito WHERE id_habito = ?');
+        $stmt = $con->prepare('CALL ObtenerHabito(?)');
         $stmt->execute([$id_habito]);        
         return $stmt;       
     }
@@ -86,18 +86,9 @@ class habitos {
 
         $stmt = $con->prepare('CALL ActualizarHabito(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
         
-        $stmt->execute([
-            $id_habito,
-            $nombre_habito, 
-            $descripcion_habito, 
-            $categoria_habito,
-            $objetivo_habito, 
-            $frecuencia, 
-            $duracion_estimada,
-            $estado, 
-            $fecha_inicio, 
-            $fecha_estimacion_final
-        ]);
+        $stmt->execute([$id_habito, $nombre_habito, $descripcion_habito, $categoria_habito, 
+                       $objetivo_habito, $frecuencia, $duracion_estimada, 
+                       $estado, $fecha_inicio, $fecha_estimacion_final]);
 
         return $stmt;
     }
@@ -106,7 +97,7 @@ class habitos {
     public static function getHabitosPorEstado($estado) {
         $db = new clase_conexion();
         $con = $db->abrirConexion();
-        $stmt = $con->prepare('SELECT * FROM Habito WHERE estado = ?');
+        $stmt = $con->prepare('CALL ObtenerHabitosPorEstado(?)');
         $stmt->execute([$estado]);
         return $stmt;
     }
@@ -115,7 +106,7 @@ class habitos {
     public static function getHabitosPorCategoria($categoria) {
         $db = new clase_conexion();
         $con = $db->abrirConexion();
-        $stmt = $con->prepare('SELECT * FROM Habito WHERE categoria_habito = ?');
+        $stmt = $con->prepare('CALL ObtenerHabitosPorCategoria(?)');
         $stmt->execute([$categoria]);
         return $stmt;
     }
@@ -131,3 +122,4 @@ class habitos {
         return $stmt;
     }
 }
+?>

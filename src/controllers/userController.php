@@ -1,8 +1,7 @@
 <?php
-
 namespace App\controllers;
-
 use App\config\responseHTTP;
+use App\config\Security;
 use App\models\userModel;
 
 class userController {
@@ -61,6 +60,52 @@ class userController {
             else {
                 new userModel($this->data);
                 echo json_encode(userModel::post());
+            }
+            exit;
+        }
+    }
+
+    // Método para logearse
+    final public function getLogin($endpoint) {
+        // Validamos method y endpoint (ruta a recurso)
+        if ($this->method == 'get' && $endpoint == $this->route) {
+            $correo_electronico = strtolower($this->params[1]); // Pasamos el correo electrónico
+            $contrasena = $this->params[2]; // Pasamos la clave
+
+            // Algunas validaciones requeridas
+            if (empty($correo_electronico) || empty($contrasena)) {
+                echo json_encode(responseHTTP::status400('Todos los campos son requeridos, proceda a llenarlos.'));
+            } else if (!filter_var($correo_electronico, FILTER_VALIDATE_EMAIL)) {
+                echo json_encode(responseHTTP::status400('El correo debe tener el formato correcto.'));
+            } else {
+                // Llamamos al procedimiento almacenado para validar el login
+                $resultado = userModel::validarLogin($correo_electronico, $contrasena);
+                if ($resultado) {
+                    $usuario = userModel::getUsuarioPorCorreo($correo_electronico);
+                    $token = Security::createTokenJwt(Security::secretKey(), [
+                        'id_usuario' => $usuario['id_usuario'],
+                        'correo_electronico' => $usuario['correo_electronico']
+                    ]);
+
+                    $response = [
+                        "message" => "Login exitoso",
+                        "token" => $token,
+                        "usuario" => [
+                            "id" => $usuario['id_usuario'],
+                            "nombre" => $usuario['nombre'],
+                            "apellidos" => $usuario['apellidos'],
+                            "correo" => $usuario['correo_electronico']
+                        ]
+                    ];
+
+                    echo json_encode($response);
+                } else {
+                    http_response_code(401);
+                    $response = [
+                        "message" => "Credenciales inválidas"
+                    ];
+                    echo json_encode($response);
+                }
             }
             exit;
         }

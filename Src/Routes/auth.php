@@ -1,25 +1,26 @@
 <?php
-use App\config\Security;
-//echo "Hemos llegado al recurso AUTH";
+use App\controllers\userController;
+$route = isset($_GET['route']) ? $_GET['route'] : null;
+$method = $_SERVER['REQUEST_METHOD'];
+$params = $_GET;
+$data = json_decode(file_get_contents('php://input'), true);
+$headers = getallheaders();
 
-echo json_encode(Security::secretKey());
-echo json_encode(Security::createPassword("hola"));
-
-
-//validando contraseñas
-$pass = Security::createPassword("hola");
-if (Security::validatePassword("hola", $pass)) {
-    echo json_encode("Contraseña correcta");
-} else {
-    echo json_encode("Contraseña incorrecta");
+if ($route === null) {
+    die(json_encode(['message' => 'Ruta no definida', 'debug' => $_GET]));
 }
 
+$controller = new userController($method, $route, $params, $data, $headers);
 
-//probando el jwt
-echo Security::createTokenJwt(Security::secretKey(),["hola"]);
-//echo (json_encode(Security::createTokenJwt(Security::secretKey(),["hola"])));
-
-
-//probando la conexion a la BD
-use App\db\connectionDB;
-connectionDB::getConnection();
+switch ($route) {
+    case 'login':
+        $controller->getLogin($route);
+        break;
+    case 'register':
+        $controller->post($route);
+        break;
+    // Añade más casos según tus rutas
+    default:
+        echo json_encode(['message' => 'Ruta no válida']);
+        break;
+}
