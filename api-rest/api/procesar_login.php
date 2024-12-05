@@ -1,9 +1,22 @@
 <?php
+// Temporalmente habilitamos los errores para debug
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 header("Access-Control-Allow-Origin: http://127.0.0.1:5501");
-header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, X-Requested-With");
+header("Access-Control-Allow-Credentials: true");
+
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 require_once "../includes/clases/clase_usuario.php";
 
@@ -12,6 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $json = file_get_contents('php://input');
         $data = json_decode($json, true);
 
+        if (!isset($data['email']) || !isset($data['password'])) {
+            throw new Exception("Datos de login incompletos");
+        }
+
         $correo_electronico = $data['email'];
         $contrasena = $data['password'];
 
@@ -19,45 +36,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $resultado = $usuario->validar_login($correo_electronico, $contrasena);
 
         if ($resultado['resultado'] == 1) {
-            // Obtener los datos del usuario
-            $datosUsuario = usuario::getUsuario($resultado['id_usuario']);
+            $_SESSION['usuario_id'] = $resultado['id_usuario'];
             
-            // Verificar que obtuvimos los datos correctamente
-            if ($datosUsuario && $datosUsuario->rowCount() > 0) {
-                $datos = $datosUsuario->fetch(PDO::FETCH_ASSOC);
-                
-                session_start();
-                $_SESSION['usuario_id'] = $resultado['id_usuario'];
-                $_SESSION['tipo_usuario'] = $resultado['tipo_usuario'];
-
-                echo json_encode([
-                    'success' => true,
-                    'tipo_usuario' => $resultado['tipo_usuario'],
-                    'nombre_completo' => $datos['nombre'] . ' ' . $datos['apellidos']
-                ]);
-            } else {
-                echo json_encode([
-                    'success' => false,
-                    'error' => 'No se pudieron obtener los datos del usuario'
-                ]);
+            // Obtener datos del usuario
+            $stmt = $usuario->getUsuario($resultado['id_usuario']);
+            $datos_usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$datos_usuario) {
+                throw new Exception("No se encontraron datos del usuario");
             }
+
+            $nombre_completo = $datos_usuario['nombre'] . ' ' . $datos_usuario['apellidos'];
+            
+            echo json_encode([
+                'success' => true,
+                'tipo_usuario' => $resultado['tipo_usuario'],
+                'nombre_completo' => $nombre_completo,
+                'usuario_id' => $resultado['id_usuario']
+            ]);
         } else {
+            http_response_code(401);
             echo json_encode([
                 'success' => false,
                 'error' => 'Credenciales inválidas'
             ]);
         }
-
     } catch (Exception $e) {
+        error_log("Error en login: " . $e->getMessage());
+        http_response_code(500);
         echo json_encode([
             'success' => false,
-            'error' => 'Error al procesar el login: ' . $e->getMessage()
+            'error' => $e->getMessage()
         ]);
     }
-} else {
-    echo json_encode([
-        'success' => false,
-        'error' => 'Método no permitido.'
-    ]);
 }
 ?>

@@ -17,26 +17,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 require_once "../includes/clases/clase_habitos.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if (!isset($_GET['usuario_id'])) {
-        http_response_code(400);
-        echo json_encode([
-            'status' => 'error',
-            'message' => 'ID de usuario no proporcionado'
-        ]);
-        exit;
-    }
-
-    $usuario_id = filter_var($_GET['usuario_id'], FILTER_SANITIZE_NUMBER_INT);
-
     try {
         $habitos = new habitos();
-        $resultado = $habitos->getHabitosUsuario($usuario_id);
+        $resultado = $habitos->getTodosHabitos();
         $habitos_lista = $resultado->fetchAll(PDO::FETCH_ASSOC);
         
-        echo json_encode([
-            'status' => 'success',
-            'data' => $habitos_lista
-        ]);
+        if ($habitos_lista) {
+            echo json_encode([
+                'status' => 'success',
+                'data' => $habitos_lista
+            ]);
+        } else {
+            echo json_encode([
+                'status' => 'success',
+                'data' => []
+            ]);
+        }
     } catch (Exception $e) {
         http_response_code(500);
         echo json_encode([
@@ -51,4 +47,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         'message' => 'Método no permitido'
     ]);
 }
-?>
+?> 

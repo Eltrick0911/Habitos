@@ -28,16 +28,18 @@ $(document).ready(function() {
     $.ajax({
       url: 'http://localhost/Habitos/api-rest/api/procesar_login.php',
       type: 'POST',
-      data: JSON.stringify(datos),
       contentType: 'application/json',
+      data: JSON.stringify({
+        email: email,
+        password: password
+      }),
       xhrFields: {
         withCredentials: true
       },
+      crossDomain: true,
       success: function(response) {
-        console.log('Respuesta del servidor:', response);
-        
         if (response.success) {
-          sessionStorage.setItem('token', response.token);
+          sessionStorage.setItem('usuario_id', response.usuario_id);
           sessionStorage.setItem('nombre_completo', response.nombre_completo);
           
           if (response.tipo_usuario === 'admin') {
@@ -46,14 +48,14 @@ $(document).ready(function() {
             window.location.href = 'http://127.0.0.1:5501/src/Routes/views/index.html';
           }
         } else {
-          alert(response.error || "Error en el inicio de sesión");
+          alert('Error: ' + (response.error || 'Credenciales inválidas'));
         }
       },
       error: function(xhr, status, error) {
         console.error('Error:', error);
         console.error('Estado:', status);
         console.error('Respuesta:', xhr.responseText);
-        alert("Error al enviar el formulario: " + error);
+        alert('Error al iniciar sesión. Por favor, intenta nuevamente.');
       }
     });
   });

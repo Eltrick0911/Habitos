@@ -16,8 +16,12 @@ class usuario{
             $db = new clase_conexion();
             $con = $db->abrirConexion();
             
-            $stmt = $con->prepare("SELECT * FROM usuario WHERE id_usuario = ?");
+            $stmt = $con->prepare("SELECT id_usuario, nombre, apellidos, correo_electronico FROM usuario WHERE id_usuario = ?");
             $stmt->execute([$id_usuario]);
+            
+            if ($stmt->rowCount() === 0) {
+                throw new Exception("Usuario no encontrado");
+            }
             
             return $stmt;
         } catch (Exception $e) {
@@ -144,6 +148,22 @@ class usuario{
             }
         } catch (PDOException $e) {
             throw new Exception("Error al validar login: " . $e->getMessage());
+        }
+    }
+
+    public function obtener_datos_usuario($id_usuario) {
+        try {
+            $db = new clase_conexion();
+            $con = $db->abrirConexion();
+            
+            $query = "SELECT nombre, apellidos FROM usuarios WHERE id_usuario = :id_usuario";
+            $stmt = $con->prepare($query);
+            $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            throw new Exception("Error al obtener datos del usuario: " . $e->getMessage());
         }
     }
 }

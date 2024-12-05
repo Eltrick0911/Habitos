@@ -7,42 +7,62 @@ $(document).ready(function() {
 
     // Función para cargar hábitos desde el servidor
     function cargarHabitos() {
-        $.ajax({
-            url: 'http://localhost/Habitos/api-rest/api/consultar_habito.php',
-            type: 'GET',
-            success: function(response) {
-                if (response.status === 'success') {
-                    const habitosContainer = $('.upcoming-appointments .card-body');
-                    habitosContainer.empty();
+        const usuario_id = sessionStorage.getItem('usuario_id');
+        
+        if (!usuario_id) {
+            console.error('No se encontró ID de usuario');
+            return;
+        }
 
-                    response.data.forEach(habito => {
-                        const habitoHTML = `
-                            <div class="appointment">
-                                <span class="name">${habito.nombre_habito}</span>
-                                <span class="title">${habito.descripcion_habito}</span>
-                                <span class="date">
-                                    <i class="fa fa-calendar" aria-hidden="true"></i> ${habito.fecha_inicio}
-                                </span>
-                                <span class="time">
-                                    <i class="fas fa-clock"></i> ${habito.duracion_estimada}
-                                    <br><small>(${habito.frecuencia})</small>
-                                </span>
-                                <a href="#" class="check" data-id="${habito.id_habito}">
-                                    <i class="far fa-check-circle" aria-hidden="true"></i>
-                                </a>
-                                <a href="#" class="times" data-id="${habito.id_habito}">
-                                    <i class="far fa-times-circle" aria-hidden="true"></i>
-                                </a>
-                            </div>
-                        `;
-                        habitosContainer.append(habitoHTML);
-                    });
-                } else {
-                    console.error('Error al cargar hábitos:', response.message);
+        $.ajax({
+            url: `http://localhost/Habitos/api-rest/api/consultar_habito.php?usuario_id=${usuario_id}`,
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                try {
+                    if (response.status === 'success') {
+                        const habitosContainer = $('.upcoming-appointments .card-body');
+                        habitosContainer.empty();
+
+                        if (response.data && response.data.length > 0) {
+                            response.data.forEach(habito => {
+                                const habitoHTML = `
+                                    <div class="appointment">
+                                        <span class="name">${habito.nombre_habito}</span>
+                                        <span class="title">${habito.descripcion_habito}</span>
+                                        <span class="date">
+                                            <i class="fa fa-calendar" aria-hidden="true"></i> ${habito.fecha_inicio}
+                                        </span>
+                                        <span class="time">
+                                            <i class="fas fa-clock"></i> ${habito.duracion_estimada}
+                                            ${habito.frecuencia ? `<br><small>(${habito.frecuencia})</small>` : ''}
+                                        </span>
+                                        <a href="#" class="check" data-id="${habito.id_habito}">
+                                            <i class="far fa-check-circle" aria-hidden="true"></i>
+                                        </a>
+                                        <a href="#" class="times" data-id="${habito.id_habito}">
+                                            <i class="far fa-times-circle" aria-hidden="true"></i>
+                                        </a>
+                                    </div>
+                                `;
+                                habitosContainer.append(habitoHTML);
+                            });
+                        } else {
+                            habitosContainer.html('<p>No hay hábitos registrados.</p>');
+                        }
+                    } else {
+                        console.error('Error en la respuesta:', response.message);
+                    }
+                } catch (e) {
+                    console.error('Error al procesar la respuesta:', e);
                 }
             },
             error: function(xhr, status, error) {
-                console.error('Error al cargar hábitos:', error);
+                console.error('Error al cargar hábitos:', {
+                    error: error,
+                    status: status,
+                    response: xhr.responseText
+                });
             }
         });
     }

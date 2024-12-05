@@ -2,6 +2,8 @@ $(document).ready(function() {
     $('#habitForm').submit(function(event) {
         event.preventDefault();
 
+        const usuario_id = sessionStorage.getItem('usuario_id');
+
         // Validaciones básicas
         let nombreHabito = $('#nombre_habito').val();
         if (nombreHabito.trim() === "") {
@@ -17,6 +19,7 @@ $(document).ready(function() {
 
         // Crear objeto con los datos del formulario
         const datosHabito = {
+            usuario_id: usuario_id,
             nombre_habito: $('#nombre_habito').val(),
             descripcion_habito: $('#descripcion_habito').val(),
             categoria_habito: $('#categoria_habito').val(),
