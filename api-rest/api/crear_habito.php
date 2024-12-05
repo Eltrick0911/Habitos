@@ -1,70 +1,76 @@
 <?php
-header("Access-Control-Allow-Origin: *");
+// Configurar headers CORS
+header("Access-Control-Allow-Origin: http://127.0.0.1:5501");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+header("Access-Control-Allow-Credentials: true");
 
-include "../includes/clases/clase_habitos.php";
+// Iniciar sesión antes de cualquier output
+session_start();
+
+// Manejar la solicitud OPTIONS (preflight)
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+require_once "../includes/clases/clase_habitos.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $data = json_decode(file_get_contents("php://input"), true);
-
-    // Validar que todos los campos requeridos estén presentes
-    $required_fields = [
-        'nombre_habito', 'descripcion_habito', 'categoria_habito', 
-        'objetivo_habito', 'frecuencia', 'duracion_estimada', 
-        'estado', 'fecha_inicio', 'fecha_estimacion_final'
-    ];
-
-    $missing_fields = array_diff($required_fields, array_keys($data));
-
-    if (empty($missing_fields)) {
-        // Validar el enum de frecuencia
-        $frecuencias_validas = ['diaria', 'semanal', 'mensual', 'personalizada'];
-        if (!in_array($data['frecuencia'], $frecuencias_validas)) {
-            header('HTTP/1.1 400 Frecuencia no válida!');
-            echo json_encode(["error" => "La frecuencia debe ser: diaria, semanal, mensual o personalizada"]);
+    try {
+        // Verificar si hay un usuario en sesión
+        if (!isset($_SESSION['usuario_id'])) {
+            http_response_code(401);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Usuario no autenticado'
+            ]);
             exit;
         }
 
-        // Validar el enum de estado
-        $estados_validos = ['activo', 'pausado', 'completado'];
-        if (!in_array($data['estado'], $estados_validos)) {
-            header('HTTP/1.1 400 Estado no válido!');
-            echo json_encode(["error" => "El estado debe ser: activo, pausado o completado"]);
-            exit;
+        // Obtener y decodificar los datos
+        $jsonData = file_get_contents("php://input");
+        $datos = json_decode($jsonData, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception('Error al decodificar JSON: ' . json_last_error_msg());
         }
 
-        $habitos = new habitos();
-        
-        try {
-            $habitos->crear_habito(
-                $data['nombre_habito'],
-                $data['descripcion_habito'],
-                $data['categoria_habito'],
-                $data['objetivo_habito'],
-                $data['frecuencia'],
-                $data['duracion_estimada'],
-                $data['estado'],
-                $data['fecha_inicio'],
-                $data['fecha_estimacion_final']
-            );
-            
-            header('HTTP/1.1 201 Hábito creado exitosamente!');
-            echo json_encode(["message" => "Hábito creado exitosamente!"]);
-        } catch (Exception $e) {
-            header('HTTP/1.1 500 Error al crear el hábito!');
-            echo json_encode(["error" => "Error al crear el hábito: " . $e->getMessage()]);
-        }
-    } else {
-        header('HTTP/1.1 400 Faltan campos requeridos!');
+        // Crear el hábito
+        $id_habito = habitos::crear_habito(
+            $datos['nombre_habito'],
+            $datos['descripcion_habito'],
+            $datos['categoria_habito'],
+            $datos['objetivo_habito'],
+            $datos['frecuencia'],
+            $datos['duracion_estimada'],
+            $datos['estado'],
+            $datos['fecha_inicio'],
+            $datos['fecha_estimacion_final'],
+            $_SESSION['usuario_id']
+        );
+
+        http_response_code(200);
         echo json_encode([
-            "error" => "Faltan campos requeridos",
-            "campos_faltantes" => array_values($missing_fields)
+            'status' => 'success',
+            'message' => 'Hábito creado exitosamente',
+            'id_habito' => $id_habito
+        ]);
+
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode([
+            'status' => 'error',
+            'message' => $e->getMessage()
         ]);
     }
 } else {
-    header('HTTP/1.1 405 Método no permitido!');
-    echo json_encode(["error" => "Método no permitido!"]);
+    http_response_code(405);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Método no permitido'
+    ]);
 }
+?>

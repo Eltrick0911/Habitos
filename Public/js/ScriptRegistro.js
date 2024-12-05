@@ -82,21 +82,28 @@ $(document).ready(function() {
 
       // Realizar la petición AJAX
       $.ajax({
-        url: '../../api-rest/api/registrar_usuario.php', // Ajusta la ruta si es necesario
+        url: 'http://localhost/Habitos/api-rest/api/registrar_usuario.php',
         type: 'POST',
         data: JSON.stringify(datos),
         contentType: 'application/json',
-        success: function(response) {
-          // Mostrar la respuesta del servidor
-          alert(response.message || response.error);
-
-          // Redirigir a index.html si el registro fue exitoso
-          if (response.message) {
-            window.location.href = '/src/Routes/views/index.html'; // Ajusta la ruta si es necesario
-          }
+        xhrFields: {
+          withCredentials: true
         },
-        error: function() {
-          alert("Error al enviar el formulario.");
+        success: function(response) {
+          console.log('Respuesta exitosa:', response);
+          alert(response.message || "Usuario registrado exitosamente");
+          // Redirección a index.html
+          setTimeout(function() {
+            window.location.replace('http://127.0.0.1:5501/src/Routes/views/index.html');
+            // O si prefieres usar una ruta relativa:
+            // window.location.replace('../../../src/Routes/views/index.html');
+          }, 1000);
+        },
+        error: function(xhr, status, error) {
+          console.error('Error:', error);
+          console.error('Estado:', status);
+          console.error('Respuesta:', xhr.responseText);
+          alert("Error al enviar el formulario: " + error);
         }
       });
     }

@@ -11,24 +11,71 @@ class usuario{
         return $stmt;
     }
 
-    public static function getUsuario($id_Usuario){
-        $db = new clase_conexion();
-        $con = $db->abrirConexion();
-        $stmt = $con->prepare('SELECT * FROM usuario WHERE id_usuario=?');
-        $stmt->execute([$id_Usuario]);        
-        return ($stmt);       
+    public static function getUsuario($id_usuario) {
+        try {
+            $db = new clase_conexion();
+            $con = $db->abrirConexion();
+            
+            $stmt = $con->prepare("SELECT * FROM usuario WHERE id_usuario = ?");
+            $stmt->execute([$id_usuario]);
+            
+            return $stmt;
+        } catch (Exception $e) {
+            throw new Exception("Error al obtener usuario: " . $e->getMessage());
+        }
     }
     public static function crear_usuario($nombre, $apellidos, $correo_electronico, $contrasena, $fecha_nacimiento, $genero, $pais_region, $nivel_suscripcion, $preferencias_notificacion) {
-        $db = new clase_conexion();
-        $con = $db->abrirConexion();
+        try {
+            $db = new clase_conexion();
+            $con = $db->abrirConexion();
+            
+            // Iniciar transacción
+            $con->beginTransaction();
 
-        // Encriptar la contraseña antes de almacenarla
-        $contrasena_encriptada = password_hash($contrasena, PASSWORD_DEFAULT);
+            // Encriptar la contraseña
+            $contrasena_encriptada = password_hash($contrasena, PASSWORD_DEFAULT);
 
-        $stmt = $con->prepare('CALL InsertarUsuario(?, ?, ?, ?, ?, ?, ?, ?, ?)');
-        $stmt->execute([$nombre, $apellidos, $correo_electronico, $contrasena_encriptada, $fecha_nacimiento, $genero, $pais_region, $nivel_suscripcion, $preferencias_notificacion]);
+            // Insertar directamente en la tabla usuario primero
+            $stmt = $con->prepare('INSERT INTO usuario (nombre, apellidos, correo_electronico, contrasena, fecha_nacimiento, genero, pais_region, nivel_suscripcion, preferencias_notificacion) 
+                                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+            $stmt->execute([
+                $nombre, 
+                $apellidos, 
+                $correo_electronico, 
+                $contrasena_encriptada, 
+                $fecha_nacimiento, 
+                $genero, 
+                $pais_region, 
+                $nivel_suscripcion, 
+                $preferencias_notificacion
+            ]);
 
-        return $stmt;
+            // Obtener el ID del usuario recién insertado
+            $id_usuario = $con->lastInsertId();
+
+            if (!$id_usuario) {
+                throw new Exception("Error al obtener el ID del usuario insertado");
+            }
+
+            // Definir el tipo por defecto
+            $tipo_default = "usuario";
+
+            // Insertar el tipo de usuario
+            $stmt_tipo = $con->prepare('INSERT INTO tipos_usuario (id_usuario, tipo) VALUES (?, ?)');
+            $stmt_tipo->execute([$id_usuario, $tipo_default]);
+
+            // Confirmar la transacción
+            $con->commit();
+
+            return true;
+
+        } catch (Exception $e) {
+            // Si hay error, revertir los cambios
+            if ($con->inTransaction()) {
+                $con->rollBack();
+            }
+            throw new Exception("Error al crear usuario: " . $e->getMessage());
+        }
     }
 
    
@@ -65,6 +112,39 @@ class usuario{
         $stmt->execute([$id_usuario, $nombre, $apellidos, $correo_electronico, $contrasena_encriptada, $fecha_nacimiento, $genero, $pais_region, $nivel_suscripcion, $preferencias_notificacion]);
 
         return $stmt;
+    }
+
+    public static function validar_login($correo_electronico, $contrasena) {
+        try {
+            $db = new clase_conexion();
+            $con = $db->abrirConexion();
+
+            // Primero obtener el usuario por correo electrónico
+            $stmt = $con->prepare("SELECT u.*, t.tipo as tipo_usuario 
+                                  FROM usuario u 
+                                  JOIN tipos_usuario t ON u.id_usuario = t.id_usuario 
+                                  WHERE u.correo_electronico = ?");
+            $stmt->execute([$correo_electronico]);
+            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($usuario && password_verify($contrasena, $usuario['contrasena'])) {
+                // Login exitoso
+                return [
+                    'resultado' => 1,
+                    'tipo_usuario' => $usuario['tipo_usuario'],
+                    'id_usuario' => $usuario['id_usuario']
+                ];
+            } else {
+                // Login fallido
+                return [
+                    'resultado' => 0,
+                    'tipo_usuario' => null,
+                    'id_usuario' => null
+                ];
+            }
+        } catch (PDOException $e) {
+            throw new Exception("Error al validar login: " . $e->getMessage());
+        }
     }
 }
 ?>

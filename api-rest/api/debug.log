@@ -1,0 +1,105 @@
+=== Nueva solicitud 2024-12-04 21:22:36 ===
+=== Nueva solicitud 2024-12-04 21:23:52 ===
+=== Nueva solicitud 2024-12-04 21:23:52 ===
+Datos recibidos: {"nombre":"Prueba","apellidos":"HTML","correo_electronico":"qs@gmail.com","contrasena":"Prueba1@","fecha_nacimiento":"2024-12-01","genero":"masculino","pais_region":"Honduras","nivel_suscripcion":"gratuita","preferencias_notificacion":"Push"}
+Datos decodificados: Array
+(
+    [nombre] => Prueba
+    [apellidos] => HTML
+    [correo_electronico] => qs@gmail.com
+    [contrasena] => Prueba1@
+    [fecha_nacimiento] => 2024-12-01
+    [genero] => masculino
+    [pais_region] => Honduras
+    [nivel_suscripcion] => gratuita
+    [preferencias_notificacion] => Push
+)
+
+Usuario creado con ID: 0
+=== Nueva solicitud 2024-12-04 21:43:23 ===
+=== Nueva solicitud 2024-12-04 21:43:23 ===
+Datos recibidos: {"nombre":"Pruebas","apellidos":"HTML","correo_electronico":"qs2@gmail.com","contrasena":"Prueba2@","fecha_nacimiento":"2024-12-03","genero":"femenino","pais_region":"Honduras","nivel_suscripcion":"gratuita","preferencias_notificacion":"Push"}
+Datos decodificados: Array
+(
+    [nombre] => Pruebas
+    [apellidos] => HTML
+    [correo_electronico] => qs2@gmail.com
+    [contrasena] => Prueba2@
+    [fecha_nacimiento] => 2024-12-03
+    [genero] => femenino
+    [pais_region] => Honduras
+    [nivel_suscripcion] => gratuita
+    [preferencias_notificacion] => Push
+)
+
+Usuario creado con ID: 0
+=== Nueva solicitud 2024-12-04 21:44:35 ===
+=== Nueva solicitud 2024-12-04 21:44:35 ===
+Datos recibidos: {"nombre":"Pruebaq","apellidos":"HTMLq","correo_electronico":"qs2@gmail.com","contrasena":"Prueba1#","fecha_nacimiento":"2024-12-01","genero":"masculino","pais_region":"Honduras","nivel_suscripcion":"gratuita","preferencias_notificacion":"Push"}
+Datos decodificados: Array
+(
+    [nombre] => Pruebaq
+    [apellidos] => HTMLq
+    [correo_electronico] => qs2@gmail.com
+    [contrasena] => Prueba1#
+    [fecha_nacimiento] => 2024-12-01
+    [genero] => masculino
+    [pais_region] => Honduras
+    [nivel_suscripcion] => gratuita
+    [preferencias_notificacion] => Push
+)
+
+Error: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'qs2@gmail.com' for key 'correo_electronico'
+Stack trace: #0 C:\xampp\htdocs\Habitos\api-rest\api\registrar_usuario.php(47): PDOStatement->execute(Array)
+#1 {main}
+=== Nueva solicitud 2024-12-04 21:45:15 ===
+=== Nueva solicitud 2024-12-04 21:45:15 ===
+Datos recibidos: {"nombre":"Prue","apellidos":"HT","correo_electronico":"as2@gmail.com","contrasena":"Prueba1@","fecha_nacimiento":"2024-12-01","genero":"masculino","pais_region":"Honduras","nivel_suscripcion":"gratuita","preferencias_notificacion":"Push"}
+Datos decodificados: Array
+(
+    [nombre] => Prue
+    [apellidos] => HT
+    [correo_electronico] => as2@gmail.com
+    [contrasena] => Prueba1@
+    [fecha_nacimiento] => 2024-12-01
+    [genero] => masculino
+    [pais_region] => Honduras
+    [nivel_suscripcion] => gratuita
+    [preferencias_notificacion] => Push
+)
+
+Usuario creado con ID: 0
+=== Nueva solicitud 2024-12-04 22:06:30 ===
+=== Nueva solicitud 2024-12-04 22:06:30 ===
+Datos recibidos: {"nombre":"Pa","apellidos":"Ca","correo_electronico":"c@gmail.com","contrasena":"cajon1@","fecha_nacimiento":"2024-12-01","genero":"masculino","pais_region":"Austria","nivel_suscripcion":"premium","preferencias_notificacion":"No"}
+Datos decodificados: Array
+(
+    [nombre] => Pa
+    [apellidos] => Ca
+    [correo_electronico] => c@gmail.com
+    [contrasena] => cajon1@
+    [fecha_nacimiento] => 2024-12-01
+    [genero] => masculino
+    [pais_region] => Austria
+    [nivel_suscripcion] => premium
+    [preferencias_notificacion] => No
+)
+
+Usuario creado con ID: 0
+=== Nueva solicitud 2024-12-04 22:09:56 ===
+=== Nueva solicitud 2024-12-04 22:09:56 ===
+Datos recibidos: {"nombre":"ps","apellidos":"ba","correo_electronico":"sa@gmail.com","contrasena":"sdfaa@1","fecha_nacimiento":"2024-12-01","genero":"femenino","pais_region":"México","nivel_suscripcion":"gratuita","preferencias_notificacion":"No"}
+Datos decodificados: Array
+(
+    [nombre] => ps
+    [apellidos] => ba
+    [correo_electronico] => sa@gmail.com
+    [contrasena] => sdfaa@1
+    [fecha_nacimiento] => 2024-12-01
+    [genero] => femenino
+    [pais_region] => México
+    [nivel_suscripcion] => gratuita
+    [preferencias_notificacion] => No
+)
+
+Usuario creado con ID: 0

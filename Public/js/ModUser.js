@@ -26,32 +26,34 @@ $(document).ready(function() {
 
     // Realizar la petición AJAX
     $.ajax({
-      url: '../api_rest/api/procesar_login.php',
+      url: 'http://localhost/Habitos/api-rest/api/procesar_login.php',
       type: 'POST',
-      data: datos, // Enviar los datos como datos de formulario
+      data: JSON.stringify(datos),
+      contentType: 'application/json',
+      xhrFields: {
+        withCredentials: true
+      },
       success: function(response) {
-        // Manejar la respuesta del servidor
-        try {
-          var respuesta = JSON.parse(response); // Intentar analizar la respuesta como JSON
-
-          if (respuesta.hasOwnProperty('error')) {
-            // Mostrar mensaje de error
-            alert(respuesta.error);
+        console.log('Respuesta del servidor:', response);
+        
+        if (response.success) {
+          sessionStorage.setItem('token', response.token);
+          sessionStorage.setItem('nombre_completo', response.nombre_completo);
+          
+          if (response.tipo_usuario === 'admin') {
+            window.location.href = 'http://127.0.0.1:5501/src/Routes/views/Administrador.HTML';
           } else {
-            // Redirigir al usuario según su rol
-            if (respuesta.tipo_usuario === 'admin') {
-              window.location.href = '/Habitos/src/Routes/views/admin.html';
-            } else {
-              window.location.href = '/Habitos/src/Routes/views/index.html';
-            }
+            window.location.href = 'http://127.0.0.1:5501/src/Routes/views/index.html';
           }
-        } catch (error) {
-          // Si la respuesta no es JSON, mostrarla como texto
-          alert(response);
+        } else {
+          alert(response.error || "Error en el inicio de sesión");
         }
       },
-      error: function() {
-        alert("Error al enviar el formulario.");
+      error: function(xhr, status, error) {
+        console.error('Error:', error);
+        console.error('Estado:', status);
+        console.error('Respuesta:', xhr.responseText);
+        alert("Error al enviar el formulario: " + error);
       }
     });
   });

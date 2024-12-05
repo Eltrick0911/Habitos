@@ -1,66 +1,61 @@
 <?php
-header("Access-Control-Allow-Origin: *");
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Headers CORS
+header("Access-Control-Allow-Origin: http://127.0.0.1:5501");
+header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST");
-header("Access-Control-Max-Age: 3600");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-include_once "../includes/clases/clase_usuario.php"; // Incluir la clase usuario
-require_once "../includes/clases/clase_conexion.php"; // Incluir la clase de conexión
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Obtener los datos de la solicitud POST
-    $data = json_decode(file_get_contents("php://input"), true);
-
-    // Validar que todos los campos requeridos estén presentes
-    if (isset($data['nombre']) && isset($data['apellidos']) && isset($data['correo_electronico']) && isset($data['contrasena']) && isset($data['fecha_nacimiento']) && isset($data['genero']) && isset($data['pais_region']) && isset($data['nivel_suscripcion']) && isset($data['preferencias_notificacion'])) {
-
-        try {
-            // Crear una instancia de la clase usuario
-            $usuario = new usuario();
-
-            // Llamar al método crear_usuario de la clase
-            $resultado = $usuario->crear_usuario(
-                $data['nombre'], 
-                $data['apellidos'], 
-                $data['correo_electronico'], 
-                $data['contrasena'], 
-                $data['fecha_nacimiento'], 
-                $data['genero'], 
-                $data['pais_region'], 
-                $data['nivel_suscripcion'], 
-                $data['preferencias_notificacion']
-            );
-
-            if ($resultado) {
-                // Obtener el objeto PDO de conexión a la base de datos
-                $db = new clase_conexion();
-                $con = $db->abrirConexion();
-
-                // Obtener el ID del usuario recién creado
-                $usuario_id = $con->lastInsertId();
-
-                // Insertar el tipo de usuario por defecto como 'usuario'
-                $stmt = $con->prepare('INSERT INTO tipos_usuario (id_usuario, tipo) VALUES (?, "usuario")');
-                $stmt->execute([$usuario_id]);
-
-                header('HTTP/1.1 201 El usuario se registró exitosamente!');
-                echo json_encode(["message" => "El usuario se registró exitosamente!"]);
-            } else {
-                header('HTTP/1.1 500 Error al registrar el usuario!');
-                echo json_encode(["error" => "Error al registrar el usuario."]); 
-            }
-        } catch (Exception $e) {
-            header('HTTP/1.1 500 Error al registrar el usuario!');
-            echo json_encode(["error" => "Error al registrar el usuario: " . $e->getMessage()]);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    try {
+        require_once "../includes/clases/clase_usuario.php";
+        
+        $input = file_get_contents("php://input");
+        $data = json_decode($input, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception("Error decodificando JSON: " . json_last_error_msg());
         }
 
-    } else {
-        header('HTTP/1.1 400 Faltan datos en la solicitud!');
-        echo json_encode(["error" => "Faltan datos en la solicitud!"]);
+        // Crear el usuario usando la clase usuario
+        $resultado = usuario::crear_usuario(
+            $data['nombre'],
+            $data['apellidos'],
+            $data['correo_electronico'],
+            $data['contrasena'],
+            $data['fecha_nacimiento'],
+            $data['genero'],
+            $data['pais_region'],
+            $data['nivel_suscripcion'],
+            $data['preferencias_notificacion']
+        );
+
+        if ($resultado) {
+            echo json_encode([
+                "message" => "Usuario registrado exitosamente",
+                "status" => "success"
+            ]);
+        } else {
+            throw new Exception("Error al registrar el usuario");
+        }
+
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode([
+            "error" => $e->getMessage(),
+            "status" => "error"
+        ]);
     }
 } else {
-    header('HTTP/1.1 405 Método no permitido!');
-    echo json_encode(["error" => "Método no permitido!"]);
+    http_response_code(405);
+    echo json_encode(["error" => "Método no permitido"]);
 }
 ?>
