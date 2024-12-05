@@ -83,7 +83,7 @@ class Security {
             self::$jwt_data = $data; //le pasamos el jwt decodificado y lo retornamos
             return $data;
             exit;
-        } catch (Exception $e) {
+        } catch  (\Exception $e) {
             error_log('Token invalido o expiro'. $e);
             die(json_encode(ResponseHttp::status401('Token invalido o ha expirado'))); //funcion que manda un mj y termina ejecucion 
         }
@@ -97,18 +97,12 @@ class Security {
         exit;
     }
 
-
     /* TERMINA LA CLASE SECURITY */
-
-
-
-
-
 
     /*Subir Imagen al servidor*/
     final public static function uploadImage($file,$name)
     {
-        $file = new Image($file);
+        $file = new \Bulletproof\Image($file);
  
         $file->setMime(array('png','jpg','jpeg'));//formatos admitidos
         $file->setSize(10000,500000);//Tamaño admitidos es Bytes

@@ -95,4 +95,26 @@ class userModel extends connectionDB {
             }
         }
     }
+    final public static function getUsuarioPorCorreo($correo_electronico) {
+        $con = self::getConnection();
+        $stmt = $con->prepare('SELECT * FROM Usuario WHERE correo_electronico = :correo_electronico');
+        $stmt->bindParam(':correo_electronico', $correo_electronico);
+        $stmt->execute();
+
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    final public static function validarLogin($correo_electronico, $contrasena) {
+        $con = self::getConnection();
+        $stmt = $con->prepare('CALL validar_login(:correo_electronico, :contrasena, @resultado)');
+        $stmt->bindParam(':correo_electronico', $correo_electronico);
+        $stmt->bindParam(':contrasena', $contrasena);
+        $stmt->execute();
+
+        $stmt = $con->query('SELECT @resultado AS resultado');
+        $resultado = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        return $resultado['resultado'] == 1;
+    }
 }
+
