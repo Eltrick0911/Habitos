@@ -2,8 +2,14 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Headers CORS
-header("Access-Control-Allow-Origin: http://127.0.0.1:5501");
+// Obtener el origen de la solicitud
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+
+// Permitir solo orígenes de localhost con cualquier puerto
+if (preg_match('/^http:\/\/localhost(:[0-9]+)?$/', $origin)) {
+    header("Access-Control-Allow-Origin: " . $origin);
+}
+
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
@@ -25,6 +31,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception("Error decodificando JSON: " . json_last_error_msg());
         }
 
+        // Agregar logging para debug
+        error_log("Datos recibidos: " . print_r($data, true));
+
+        // Validar que todos los campos necesarios estén presentes
+        $campos_requeridos = ['nombre', 'apellidos', 'correo_electronico', 'contrasena', 
+                            'fecha_nacimiento', 'genero', 'pais_region', 
+                            'nivel_suscripcion', 'preferencias_notificacion'];
+        
+        foreach ($campos_requeridos as $campo) {
+            if (!isset($data[$campo])) {
+                throw new Exception("Campo requerido faltante: " . $campo);
+            }
+        }
+
         // Crear el usuario usando la clase usuario
         $resultado = usuario::crear_usuario(
             $data['nombre'],
@@ -39,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
 
         if ($resultado) {
+            http_response_code(200);
             echo json_encode([
                 "message" => "Usuario registrado exitosamente",
                 "status" => "success"
@@ -48,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
     } catch (Exception $e) {
+        error_log("Error en registro: " . $e->getMessage());
         http_response_code(500);
         echo json_encode([
             "error" => $e->getMessage(),

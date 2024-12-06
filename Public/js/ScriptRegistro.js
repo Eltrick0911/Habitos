@@ -56,28 +56,16 @@ $(document).ready(function() {
 
     if (nombreValido && apellidoValido && correoValido && contrasenaValida /* && ... (otras validaciones) ... */ ) {
       // Obtener los valores del formulario
-      var nombre = $("#nombre").val();
-      var apellidos = $("#apellido").val();
-      var correo_electronico = $("#email").val();
-      var contrasena = $("#password").val();
-      var fecha_nacimiento = $("#fechaNacimiento").val();
-      var genero = $("#genero").val();
-      var pais_region = $("#pais_region").val();  // Asegúrate de que este campo exista en tu formulario
-      var nivel_suscripcion = $("#nivel_suscripcion").val(); // Asegúrate de que este campo exista en tu formulario
-      var preferencias_notificacion = $("#preferencias_notificacion").val(); // Asegúrate de que este campo exista en tu formulario
-
-
-      // Crear un objeto con los datos del formulario
       var datos = {
-        nombre: nombre,
-        apellidos: apellidos,
-        correo_electronico: correo_electronico,
-        contrasena: contrasena,
-        fecha_nacimiento: fecha_nacimiento,
-        genero: genero,
-        pais_region: pais_region,  // Incluir pais_region en los datos
-        nivel_suscripcion: nivel_suscripcion,  // Incluir nivel_suscripcion en los datos
-        preferencias_notificacion: preferencias_notificacion  // Incluir preferencias_notificacion en los datos
+        nombre: $("#nombre").val(),
+        apellidos: $("#apellido").val(),
+        correo_electronico: $("#email").val(),
+        contrasena: $("#password").val(),
+        fecha_nacimiento: $("#fechaNacimiento").val(),
+        genero: $("#genero").val(),
+        pais_region: $("#pais_region").val(),
+        nivel_suscripcion: $("#nivel_suscripcion").val(),
+        preferencias_notificacion: $("#preferencias_notificacion").val()
       };
 
       // Realizar la petición AJAX
@@ -91,19 +79,27 @@ $(document).ready(function() {
         },
         success: function(response) {
           console.log('Respuesta exitosa:', response);
-          alert(response.message || "Usuario registrado exitosamente");
-          // Redirección a index.html
-          setTimeout(function() {
-            window.location.replace('http://127.0.0.1:5501/src/Routes/views/index.html');
-            // O si prefieres usar una ruta relativa:
-            // window.location.replace('../../../src/Routes/views/index.html');
-          }, 1000);
+          if (response.status === "success") {
+            alert(response.message || "Usuario registrado exitosamente");
+            setTimeout(function() {
+              window.location.href = 'http://localhost:3000/Habitos/src/Routes/views/index.html';
+            }, 1000);
+          } else {
+            alert("Error: " + (response.error || "Error desconocido"));
+          }
         },
         error: function(xhr, status, error) {
           console.error('Error:', error);
           console.error('Estado:', status);
           console.error('Respuesta:', xhr.responseText);
-          alert("Error al enviar el formulario: " + error);
+          let errorMessage = "Error al enviar el formulario";
+          try {
+            const response = JSON.parse(xhr.responseText);
+            errorMessage = response.error || error;
+          } catch(e) {
+            errorMessage = error;
+          }
+          alert(errorMessage);
         }
       });
     }

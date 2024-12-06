@@ -3,15 +3,22 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-header("Access-Control-Allow-Origin: http://127.0.0.1:5501");
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, X-Requested-With");
-header("Access-Control-Allow-Credentials: true");
+// Obtener el origen de la solicitud
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+// Permitir solo orígenes de localhost con cualquier puerto
+if (preg_match('/^http:\/\/localhost(:[0-9]+)?$/', $origin)) {
+    header("Access-Control-Allow-Origin: " . $origin);
+}
+
+header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+header("Content-Type: application/json; charset=UTF-8");
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
-    exit;
+    exit();
 }
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -37,6 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($resultado['resultado'] == 1) {
             $_SESSION['usuario_id'] = $resultado['id_usuario'];
+            $_SESSION['tipo_usuario'] = $resultado['tipo_usuario'];
+            $_SESSION['logged_in'] = true;
+            $_SESSION['s_usuario'] = $correo_electronico;
             
             // Obtener datos del usuario
             $stmt = $usuario->getUsuario($resultado['id_usuario']);
@@ -47,12 +57,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             $nombre_completo = $datos_usuario['nombre'] . ' ' . $datos_usuario['apellidos'];
+            $_SESSION['nombre_completo'] = $nombre_completo;
             
             echo json_encode([
                 'success' => true,
                 'tipo_usuario' => $resultado['tipo_usuario'],
                 'nombre_completo' => $nombre_completo,
-                'usuario_id' => $resultado['id_usuario']
+                'usuario_id' => $resultado['id_usuario'],
+                'email' => $correo_electronico
             ]);
         } else {
             http_response_code(401);
