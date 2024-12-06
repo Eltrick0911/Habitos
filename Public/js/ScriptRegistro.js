@@ -81,9 +81,8 @@ $(document).ready(function() {
           console.log('Respuesta exitosa:', response);
           if (response.status === "success") {
             alert(response.message || "Usuario registrado exitosamente");
-            setTimeout(function() {
-              window.location.href = 'http://localhost:3000/Habitos/src/Routes/views/index.html';
-            }, 1000);
+            // Usar una ruta absoluta desde la raíz
+            window.location.href = 'http://localhost/Habitos/src/Routes/views/index.html';
           } else {
             alert("Error: " + (response.error || "Error desconocido"));
           }

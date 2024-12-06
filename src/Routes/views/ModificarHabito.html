@@ -3,79 +3,96 @@
 <head>
   <title>Modificar Hábito</title>
   <link rel="stylesheet" href="../../../Public/ccs/ModUser.css"> 
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="../../../Public/js/ModificarHabito.js" defer></script>
 </head>
 <body>
-  <h1>Modificar Hábito</h1>
-  <div class="container"> 
-    <form id="modificarHabitForm">
+  <div class="top">
+    <div class="upcoming-appointments card">
+        <div class="card-header">
+            <h1>Modificar Hábito</h1>
+        </div>
+        <div class="card-body">
+            <form id="modificarHabitForm" class="habito-form">
+                <input type="hidden" id="id_habito" name="id_habito">
 
-      <input type="hidden" id="id_habito" name="id_habito" value="[id_habito]"> 
+                <div class="form-group">
+                    <label for="nombre_habito">Nombre del Hábito:</label>
+                    <input type="text" id="nombre_habito" name="nombre_habito" required>
+                </div>
 
-      <div class="input-group">
-        <label for="nombre_habito">Nombre del Hábito:</label>
-        <input type="text" id="nombre_habito" name="nombre_habito" value="[nombre_habito]" required>
-      </div>
+                <div class="form-group">
+                    <label for="descripcion_habito">Descripción:</label>
+                    <textarea id="descripcion_habito" name="descripcion_habito"></textarea>
+                </div>
 
-      <div class="input-group">
-        <label for="descripcion_habito">Descripción:</label>
-        <textarea id="descripcion_habito" name="descripcion_habito">[descripcion_habito]</textarea>
-      </div>
+                <div class="form-group">
+                    <label for="categoria_habito">Categoría:</label>
+                    <select id="categoria_habito" name="categoria_habito" required>
+                        <option value="sueño">Sueño</option>
+                        <option value="alimentacion">Alimentación</option>
+                        <option value="ejercicio">Ejercicio</option>
+                        <option value="estudio">Estudio</option>
+                        <option value="recreacion">Recreación</option>
+                        <option value="trabajo">Trabajo</option>
+                        <option value="hogar">Trabajos del Hogar</option>
+                        <option value="personal">Cuidado Personal</option>
+                        <option value="social">Social</option>
+                        <option value="finanzas">Finanzas</option>
+                    </select>
+                </div>
 
-      <div class="input-group">
-        <label for="categoria_habito">Categoría:</label>
-        <select id="categoria_habito" name="categoria_habito">
-          <option value="sueño" [selected_sueño]>Sueño</option>
-          <option value="alimentacion" [selected_alimentacion]>Alimentación</option>
-          </select>
-      </div>
+                <div class="form-group">
+                    <label for="objetivo_habito">Objetivo:</label>
+                    <input type="text" id="objetivo_habito" name="objetivo_habito" required>
+                </div>
 
-      <div class="input-group">
-        <label for="objetivo_habito">Objetivo:</label>
-        <input type="text" id="objetivo_habito" name="objetivo_habito" value="[objetivo_habito]">
-      </div>
+                <div class="form-group">
+                    <label for="frecuencia">Frecuencia:</label>
+                    <select id="frecuencia" name="frecuencia" required>
+                        <option value="diaria">Diaria</option>
+                        <option value="semanal">Semanal</option>
+                        <option value="quincenal">Quincenal</option>
+                        <option value="mensual">Mensual</option>
+                        <option value="bimestral">Bimestral</option>
+                        <option value="trimestral">Trimestral</option>
+                        <option value="semestral">Semestral</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
 
-      <div class="input-group">
-        <label for="frecuencia">Frecuencia:</label>
-        <select id="frecuencia" name="frecuencia">
-          <option value="diaria" [selected_diaria]>Diaria</option>
-          <option value="semanal" [selected_semanal]>Semanal</option>
-          </select>
-      </div>
+                <div class="form-group">
+                    <label for="duracion_estimada">Duración Estimada (minutos):</label>
+                    <input type="number" id="duracion_estimada" name="duracion_estimada" required>
+                </div>
 
-      <div class="input-group">
-        <label for="duracion_estimada">Duración Estimada:</label>
-        <input type="text" id="duracion_estimada" name="duracion_estimada" value="[duracion_estimada]">
-      </div>
+                <div class="form-group">
+                    <label for="estado">Estado:</label>
+                    <select id="estado" name="estado" required>
+                        <option value="activo">Activo</option>
+                        <option value="pausado">Pausado</option>
+                        <option value="completado">Completado</option>
+                    </select>
+                </div>
 
-      <div class="input-group">
-        <label for="estado">Estado:</label>
-        <select id="estado" name="estado">
-          <option value="pendiente" [selected_pendiente]>Pendiente</option>
-          <option value="en progreso" [selected_en_progreso]>En Progreso</option>
-          <option value="completado" [selected_completado]>Completado</option>
-        </select>
-      </div>
+                <div class="form-group">
+                    <label for="fecha_inicio">Fecha de Inicio:</label>
+                    <input type="date" id="fecha_inicio" name="fecha_inicio" required>
+                </div>
 
-      <div class="input-group">
-        <label for="fecha_inicio">Fecha de Inicio:</label>
-        <input type="date" id="fecha_inicio" name="fecha_inicio" value="[fecha_inicio]">
-      </div>
+                <div class="form-group">
+                    <label for="fecha_estimacion_final">Fecha de Estimación Final:</label>
+                    <input type="date" id="fecha_estimacion_final" name="fecha_estimacion_final" required>
+                </div>
 
-      <div class="input-group">
-        <label for="fecha_estimacion_final">Fecha de Estimación Final:</label>
-        <input type="date" id="fecha_estimacion_final" name="fecha_estimacion_final" value="[fecha_estimacion_final]">
-      </div>
-
-      <button type="submit">Guardar Cambios</button>
-
-    </form>
-
-    <form id="eliminarHabitForm" method="post" action="eliminar_habito.php"> 
-      <input type="hidden" name="id_habito" value="[id_habito]"> 
-      <button type="submit" class="delete-button">Eliminar Hábito</button>
-    </form>
-  </div> 
-
-  <script src="../../../Public/js/ModificarHabito.js"></script>
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Guardar Cambios</button>
+                    <button type="button" class="btn-danger" id="btnEliminar">Eliminar Hábito</button>
+                    <button type="button" class="btn-secondary" onclick="cargarContenido('Habitos.html')">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+  </div>
 </body>
 </html>

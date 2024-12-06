@@ -1,6 +1,13 @@
 $(document).ready(function() {
     // Cargar nombre del usuario
     const nombreCompleto = sessionStorage.getItem('nombre_completo');
+    const usuario_id = sessionStorage.getItem('usuario_id');
+    
+    console.log('Datos de sesión:', {
+        nombreCompleto,
+        usuario_id
+    });
+
     if (nombreCompleto) {
         $('.profile select').html(`<option value="${nombreCompleto}">${nombreCompleto}</option>`);
     }
@@ -86,36 +93,42 @@ $(document).ready(function() {
                 cargarContenido("../views/GrupoApoyo.html");
                 break;
             case 3:
+                cargarContenido("../views/Habitos.html");
                 break;
             default:
                 alert("Error al cargar el contenido.");
         }
     });
 
-    function cargarContenido(url) {
-        if (window.location.href.endsWith(url)) {
-            return;
-        }
-
-        $.ajax({
-            url: url,
-            type: 'GET',
-            cache: false,
-            success: function(response) {
-                if (url === "../views/index.html") {
-                    $("body").empty();
-                    $("body").html(response);
-                    generarGrafico();
-                    cargarHabitos(); // Cargar hábitos después de recargar el index
-                } else {
-                    $("#contenidoDinamico").html(response);
-                }
-            },
-            error: function() {
-                alert("Error al cargar el contenido.");
-            }
-        });
+   function cargarContenido(url) {
+    if (window.location.href.endsWith(url)) {
+        return;
     }
+
+    $.ajax({
+        url: url,
+        type: 'GET',
+        cache: false,
+        success: function(response) {
+            if (url === "../views/index.html") {
+                $("body").empty();
+                $("body").html(response);
+                generarGrafico();
+                cargarHabitos();
+            } else {
+                $("#contenidoDinamico").html(response);
+                if (url === "../views/Habitos.html") {
+                    if (!$('script[src*="habitos.js"]').length) {
+                        $.getScript('../../../Public/js/habitos.js');
+                    }
+                }
+            }
+        },
+        error: function() {
+            alert("Error al cargar el contenido.");
+        }
+    });
+}
 
     // Mantener el código existente del gráfico
     function generarGrafico() {

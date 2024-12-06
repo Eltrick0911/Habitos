@@ -1,55 +1,62 @@
-document.getElementById('modificarHabitForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-  
-    // Obtener los valores de los campos del formulario
-    let idHabito = document.getElementById('id_habito').value;
-    let nombreHabito = document.getElementById('nombre_habito').value;
-    let descripcionHabito = document.getElementById('descripcion_habito').value;
-    let categoriaHabito = document.getElementById('categoria_habito').value;
-    let objetivoHabito = document.getElementById('objetivo_habito').value;
-    let frecuencia = document.getElementById('frecuencia').value;
-    let duracionEstimada = document.getElementById('duracion_estimada').value;
-    let estado = document.getElementById('estado').value;
-    let fechaInicio = document.getElementById('fecha_inicio').value;
-    let fechaEstimacionFinal = document.getElementById('fecha_estimacion_final').value;
-  
-    // Validaciones (puedes agregar más validaciones aquí)
-    if (nombreHabito.trim() === "") {
-      alert("Por favor, ingresa el nombre del hábito.");
-      return;
+$(document).ready(function() {
+    // Intentar obtener el ID de múltiples fuentes
+    const urlParams = new URLSearchParams(window.location.search);
+    const id_habito = urlParams.get('id') || sessionStorage.getItem('habito_id');
+    const usuario_id = sessionStorage.getItem('usuario_id');
+
+    console.log('=== Debug ModificarHabito.js ===');
+    console.log('ID del hábito:', id_habito);
+    console.log('ID del usuario:', usuario_id);
+
+    if (!id_habito || !usuario_id) {
+        console.error('Falta ID del hábito o usuario');
+        alert('Error: No se pudo identificar el hábito a modificar');
+        window.location.href = '/Habitos/src/Routes/views/Habitos.html';
+        return;
     }
-  
-    // Preparar los datos para enviar al servidor
-    let formData = new FormData();
-    formData.append('id_habito', idHabito);
-    formData.append('nombre_habito', nombreHabito);
-    formData.append('descripcion_habito', descripcionHabito);
-    formData.append('categoria_habito', categoriaHabito);
-    formData.append('objetivo_habito', objetivoHabito);
-    formData.append('frecuencia', frecuencia);
-    formData.append('duracion_estimada', duracionEstimada);
-    formData.append('estado', estado);
-    formData.append('fecha_inicio', fechaInicio);
-    formData.append('fecha_estimacion_final', fechaEstimacionFinal);
-  
-    // Enviar los datos al servidor usando fetch (o AJAX)
-    fetch('modificar_habito.php', {
-      method: 'POST',
-      body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        alert("Hábito modificado correctamente.");
-        // Puedes redirigir a otra página o actualizar la página actual
-      } else {
-        alert("Error al modificar el hábito.");
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert("Error al modificar el hábito.");
+
+    // Cargar los datos del hábito
+    $.ajax({
+        url: 'http://localhost/Habitos/api-rest/api/consultar_habito.php',
+        type: 'GET',
+        data: {
+            id: id_habito,
+            usuario_id: usuario_id
+        },
+        success: function(response) {
+            console.log('Respuesta de consulta:', response);
+            if (response && response.status === 'success' && response.data) {
+                const habito = response.data[0]; // Tomar el primer elemento del array
+                console.log('Datos a cargar en el formulario:', habito); // Debug
+                $('#id_habito').val(id_habito); // Usar el ID original
+                $('#nombre_habito').val(habito.nombre_habito);
+                $('#descripcion_habito').val(habito.descripcion_habito);
+                $('#categoria_habito').val(habito.categoria_habito);
+                $('#objetivo_habito').val(habito.objetivo_habito);
+                $('#frecuencia').val(habito.frecuencia);
+                $('#duracion_estimada').val(habito.duracion_estimada);
+                $('#estado').val(habito.estado);
+                $('#fecha_inicio').val(formatearFecha(habito.fecha_inicio));
+                $('#fecha_estimacion_final').val(formatearFecha(habito.fecha_estimacion_final));
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error en la petición:', {
+                status: xhr.status,
+                statusText: xhr.statusText,
+                responseText: xhr.responseText
+            });
+        }
     });
-  });
-  
-  // Puedes agregar un evento similar para el formulario de eliminar hábito
+});
+
+function formatearFecha(fecha) {
+    if (!fecha) return '';
+    try {
+        const fechaObj = new Date(fecha);
+        return fechaObj.toISOString().split('T')[0];
+    } catch (error) {
+        console.error('Error al formatear fecha:', error);
+        return '';
+    }
+}

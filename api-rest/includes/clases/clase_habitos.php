@@ -28,11 +28,8 @@ class habitos {
             $db = new clase_conexion();
             $con = $db->abrirConexion();
             
-            // Iniciamos la transacción
-            $con->beginTransaction();
-
-            // Primero insertamos el hábito
-            $stmt = $con->prepare('CALL InsertarHabito(?, ?, ?, ?, ?, ?, ?, ?, ?)');
+            // Llamar al procedimiento almacenado
+            $stmt = $con->prepare('CALL InsertarHabito(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, @id_habito)');
             $stmt->execute([
                 $nombre_habito, 
                 $descripcion_habito, 
@@ -42,38 +39,40 @@ class habitos {
                 $duracion_estimada,
                 $estado, 
                 $fecha_inicio, 
-                $fecha_estimacion_final
+                $fecha_estimacion_final,
+                $usuario_id
             ]);
 
-            // Obtenemos el ID del hábito recién insertado
-            $id_habito = $con->lastInsertId();
-
-            // Insertamos la relación usuario-hábito
-            $stmt_relacion = $con->prepare('
-                INSERT INTO usuario_habito (usuario_id, habito_id) 
-                VALUES (?, ?)
-            ');
-            $stmt_relacion->execute([$usuario_id, $id_habito]);
-
-            // Confirmamos la transacción
-            $con->commit();
-
-            return $id_habito;
+            // Obtener el ID del hábito insertado
+            $result = $con->query("SELECT @id_habito as id_habito")->fetch();
+            return $result['id_habito'];
 
         } catch (Exception $e) {
-            // Si hay error, revertimos los cambios
-            $con->rollBack();
             throw new Exception("Error al crear hábito: " . $e->getMessage());
         }
     }
 
     // Método para eliminar un hábito
-    public static function eliminarHabito($id_habito) {
-        $db = new clase_conexion();
-        $con = $db->abrirConexion();
-        $stmt = $con->prepare('CALL EliminarHabito(?)');
-        $stmt->execute([$id_habito]);
-        return $stmt;
+    public function eliminarHabito($id_habito) {
+        try {
+            $db = new clase_conexion();
+            $con = $db->abrirConexion();
+            
+            // Primero eliminamos las relaciones en usuario_habito
+            $this->eliminarUsuarioHabito($id_habito);
+            
+            // Luego eliminamos el hábito usando el procedimiento almacenado
+            $stmt = $con->prepare('CALL EliminarHabito(?)');
+            $stmt->execute([$id_habito]);
+            
+            if ($stmt->errorInfo()[0] != '00000') {
+                throw new Exception("Error al eliminar el hábito: " . $stmt->errorInfo()[2]);
+            }
+            
+            return true;
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     // Método para actualizar un hábito
@@ -120,6 +119,24 @@ class habitos {
                               WHERE uh.usuario_id = ?');
         $stmt->execute([$usuario_id]);
         return $stmt;
+    }
+
+    public function eliminarUsuarioHabito($id_habito) {
+        try {
+            $db = new clase_conexion();
+            $con = $db->abrirConexion();
+            
+            $stmt = $con->prepare('DELETE FROM usuario_habito WHERE habito_id = ?');
+            $stmt->execute([$id_habito]);
+            
+            if ($stmt->errorInfo()[0] != '00000') {
+                throw new Exception("Error al eliminar la relación usuario-hábito: " . $stmt->errorInfo()[2]);
+            }
+            
+            return true;
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 }
 ?>

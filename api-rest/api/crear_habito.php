@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             throw new Exception('Error al decodificar JSON: ' . json_last_error_msg());
         }
 
-        // Crear el hábito
+        // Crear el hábito y la relación usuario-hábito
         $id_habito = habitos::crear_habito(
             $datos['nombre_habito'],
             $datos['descripcion_habito'],
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $datos['estado'],
             $datos['fecha_inicio'],
             $datos['fecha_estimacion_final'],
-            $_SESSION['usuario_id']
+            $_SESSION['usuario_id']  // ID del usuario de la sesión
         );
 
         http_response_code(200);

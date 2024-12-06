@@ -1,34 +1,38 @@
 $(document).ready(function() {
+    // Verificar si hay usuario logueado
+    const usuario_id = sessionStorage.getItem('usuario_id');
+    if (!usuario_id) {
+        alert('Debe iniciar sesión para agregar hábitos');
+        window.location.href = '/Habitos/login.html';
+        return;
+    }
+
     $('#habitForm').submit(function(event) {
         event.preventDefault();
 
-        const usuario_id = sessionStorage.getItem('usuario_id');
-
         // Validaciones básicas
-        let nombreHabito = $('#nombre_habito').val();
-        if (nombreHabito.trim() === "") {
+        if (!$('#nombre_habito').val().trim()) {
             alert("Por favor, ingresa el nombre del hábito.");
             return;
         }
 
-        let fechaInicio = $('#fecha_inicio').val();
-        if (fechaInicio === "") {
+        if (!$('#fecha_inicio').val()) {
             alert("Por favor, selecciona la fecha de inicio.");
             return;
         }
 
         // Crear objeto con los datos del formulario
         const datosHabito = {
-            usuario_id: usuario_id,
-            nombre_habito: $('#nombre_habito').val(),
-            descripcion_habito: $('#descripcion_habito').val(),
+            nombre_habito: $('#nombre_habito').val().trim(),
+            descripcion_habito: $('#descripcion_habito').val().trim(),
             categoria_habito: $('#categoria_habito').val(),
-            objetivo_habito: $('#objetivo_habito').val(),
+            objetivo_habito: $('#objetivo_habito').val().trim(),
             frecuencia: $('#frecuencia').val(),
             duracion_estimada: $('#duracion_estimada').val(),
             estado: $('#estado').val(),
             fecha_inicio: $('#fecha_inicio').val(),
-            fecha_estimacion_final: $('#fecha_estimacion_final').val()
+            fecha_estimacion_final: $('#fecha_estimacion_final').val(),
+            usuario_id: sessionStorage.getItem('usuario_id')
         };
 
         // Enviar datos al servidor
@@ -40,49 +44,33 @@ $(document).ready(function() {
             xhrFields: {
                 withCredentials: true
             },
-            crossDomain: true,
             success: function(response) {
                 if (response.status === 'success') {
                     alert('¡Hábito agregado exitosamente!');
-                    window.location.href = '../views/index.html';
+                    window.location.href = '/Habitos/src/Routes/views/index.html';
                 } else {
                     alert('Error al agregar el hábito: ' + response.message);
                 }
             },
             error: function(xhr, status, error) {
                 console.error('Error:', error);
-                console.error('Estado:', status);
-                console.error('Respuesta:', xhr.responseText);
-                
                 let mensaje = 'Error al agregar el hábito.';
-                if (xhr.responseText) {
-                    try {
-                        const respuesta = JSON.parse(xhr.responseText);
-                        mensaje += ' ' + (respuesta.message || '');
-                    } catch(e) {
-                        mensaje += ' Por favor, intenta nuevamente.';
-                    }
+                try {
+                    const respuesta = JSON.parse(xhr.responseText);
+                    mensaje += ' ' + (respuesta.message || '');
+                } catch(e) {
+                    mensaje += ' Por favor, intenta nuevamente.';
                 }
                 alert(mensaje);
             }
         });
     });
 
-    // Validaciones adicionales
-    $('#fecha_inicio').change(function() {
-        let fechaInicio = new Date($(this).val());
-        let fechaEstimacion = $('#fecha_estimacion_final');
-        
-        // Establecer la fecha mínima de estimación final
-        fechaEstimacion.attr('min', $(this).val());
-        
-        // Si la fecha de estimación es anterior a la fecha de inicio, la limpiamos
-        if (fechaEstimacion.val() && new Date(fechaEstimacion.val()) < fechaInicio) {
-            fechaEstimacion.val('');
-        }
-    });
-
-    // Establecer fecha mínima de inicio como hoy
-    let today = new Date().toISOString().split('T')[0];
+    // Configurar fechas mínimas
+    const today = new Date().toISOString().split('T')[0];
     $('#fecha_inicio').attr('min', today);
+    
+    $('#fecha_inicio').change(function() {
+        $('#fecha_estimacion_final').attr('min', $(this).val());
+    });
 });

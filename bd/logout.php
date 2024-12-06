@@ -9,6 +9,6 @@ if (isset($_COOKIE[session_name()])) {
 }
 
 // Redireccionar al login
-header("Location: ../src/Routes/views/login.html");
+header("Location: ../Public/Index.html");
 exit();
 ?>
