@@ -453,3 +453,22 @@ a {
 .notifications .notification .date {
   grid-area: date;
 }
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn-logout {
+  background-color: #9d68f3;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.btn-logout:hover {
+  background-color: #6c4ef5;
+}

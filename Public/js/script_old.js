@@ -256,7 +256,12 @@ $(document).ready(function() {
             options: options
         });
     }
-
+    $('#logoutButton').click(function() {
+        // Limpiar datos de sesión
+        sessionStorage.clear();
+        // Redirigir a la página de inicio de sesión
+        window.location.href = 'http://localhost/Habitos/Public/Index.html';
+    });
     // Cargar hábitos al iniciar la página
     cargarHabitos();
 });

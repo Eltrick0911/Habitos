@@ -6,25 +6,33 @@
 </head>
 <body>
   <div class="container">
+    <h1>Grupo de Apoyo</h1>
 
-    <h1>Grupo de Apoyo - [Nombre del Hábito]</h1> 
+    <label for="tipoGrupo">Selecciona el tipo de grupo:</label>
+    <select id="tipoGrupo">
+      <option value="1">Sueño</option>
+      <option value="2">Alimentación</option>
+      <option value="3">Ejercicio</option>
+      <option value="4">Estudio</option>
+      <option value="5">Recreación</option>
+      <option value="6">Trabajo</option>
+      <option value="7">Trabajos del Hogar</option>
+      <option value="8">Cuidado Personal</option>
+      <option value="9">Social</option>
+      <option value="10">Finanzas</option>
+    </select>
 
-    <div class="comentario">
-      <p><strong>Usuario 1</strong> - 2024-03-15</p>
-      <p>Este hábito me ha ayudado mucho a mejorar mi concentración.</p>
-    </div>
-
-    <div class="comentario">
-      <p><strong>Usuario 2</strong> - 2024-03-12</p>
-      <p>¡Ánimo a todos! Seguimos adelante con este hábito.</p>
+    <div id="comentariosGrupo">
+      <!-- Aquí se cargarán los comentarios del grupo seleccionado -->
     </div>
 
     <h2>Agregar Comentario</h2>
     <form id="commentForm">
-      <textarea name="comentario" rows="4" cols="50" required></textarea><br><br>
+      <textarea name="comentario" id="comentario" rows="4" cols="50" required></textarea><br><br>
       <button type="submit">Publicar</button>
     </form>
-
   </div>
 
-  <script src="script.js"></script>
+  <script src="../../../Public/js/Grupos.js"></script>
+</body>
+</html>

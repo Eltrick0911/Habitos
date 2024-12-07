@@ -1,0 +1,72 @@
+ALTER TABLE `grupo_apoyo` DROP FOREIGN KEY `grupo_apoyo_ibfk_1`;
+
+ALTER TABLE `grupo_apoyo`
+DROP COLUMN `descripcion_grupo`,
+DROP COLUMN `fecha_creacion`,
+DROP COLUMN `habito_compartido`,
+DROP COLUMN `mensajes_interacciones`,
+ADD COLUMN `tipo_habito` VARCHAR(50) NOT NULL AFTER `nombre_grupo`;
+
+
+ALTER TABLE `comentario_habito` DROP FOREIGN KEY 'habito_id';
+CHANGE COLUMN `habito_id` `grupo_id` INT(11) NOT NULL;
+
+DROP PROCEDURE IF EXISTS `InsertarGrupoApoyo`;
+DROP PROCEDURE IF EXISTS `ActualizarGrupoApoyo`;
+DROP PROCEDURE IF EXISTS `EliminarGrupoApoyo`;
+DELIMITER $$
+
+CREATE PROCEDURE `InsertarComentario` (
+    IN `p_grupo_id` INT,
+    IN `p_usuario_id` INT,
+    IN `p_comentario` TEXT,
+    IN `p_fecha_comentario` DATE
+)
+BEGIN
+    INSERT INTO `comentario_habito` (`grupo_id`, `usuario_id`, `comentario`, `fecha_comentario`)
+    VALUES (p_grupo_id, p_usuario_id, p_comentario, p_fecha_comentario);
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE PROCEDURE `EliminarComentario` (
+    IN `p_id_comentario_habito` INT
+)
+BEGIN
+    DELETE FROM `comentario_habito` WHERE `id_comentario_habito` = p_id_comentario_habito;
+END$$
+ 
+DELIMITER ;
+DELIMITER $$
+
+CREATE PROCEDURE `ObtenerComentariosPorGrupo` (
+    IN `p_grupo_id` INT
+)
+BEGIN
+    SELECT * FROM `comentario_habito` WHERE `grupo_id` = p_grupo_id;
+END$$
+
+DELIMITER ;
+CREATE PROCEDURE `ActualizarComentario` (
+    IN `p_id_comentario_habito` INT,
+    IN `p_comentario` TEXT
+)
+BEGIN
+    UPDATE `comentario_habito`
+    SET `comentario` = p_comentario
+    WHERE `id_comentario_habito` = p_id_comentario_habito;
+END$$
+
+DELIMITER ;
+INSERT INTO `grupo_apoyo` (`nombre_grupo`, `tipo_habito`) VALUES ('Grupo de Salud', 'salud');
+INSERT INTO `grupo_apoyo` (`nombre_grupo`, `tipo_habito`) VALUES ('Grupo de Educación', 'educacion');
+INSERT INTO `grupo_apoyo` (`nombre_grupo`, `tipo_habito`) VALUES ('Grupo de Bienestar', 'bienestar');
+INSERT INTO `grupo_apoyo` (`nombre_grupo`, `tipo_habito`) VALUES ('Grupo de Fitness', 'fitness');
+INSERT INTO `grupo_apoyo` (`nombre_grupo`, `tipo_habito`) VALUES ('Grupo de Nutrición', 'nutricion');
+INSERT INTO `grupo_apoyo` (`nombre_grupo`, `tipo_habito`) VALUES ('Grupo de Productividad', 'productividad');
+INSERT INTO `grupo_apoyo` (`nombre_grupo`, `tipo_habito`) VALUES ('Grupo de Meditación', 'meditacion');
+INSERT INTO `grupo_apoyo` (`nombre_grupo`, `tipo_habito`) VALUES ('Grupo de Finanzas', 'finanzas');
+INSERT INTO `grupo_apoyo` (`nombre_grupo`, `tipo_habito`) VALUES ('Grupo de Desarrollo Personal', 'desarrollo_personal');
+INSERT INTO `grupo_apoyo` (`nombre_grupo`, `tipo_habito`) VALUES ('Grupo de Creatividad', 'creatividad');
