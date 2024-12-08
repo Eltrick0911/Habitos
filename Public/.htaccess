@@ -1,14 +1,14 @@
-#RewriteEngine On
-#Options All -Indexes
+RewriteEngine On
+Options All -Indexes
 
 # Camuflar archivos PHP como NAS
 #AddType application/x-httpd-php .nas 
 
 # Prevenir acceso al archivo .htaccess
-#<files .htaccess>
-#order allow,deny
-#deny from all
-#</files>
+<files .htaccess>
+order allow,deny
+deny from all
+</files>
 
 # Bloqueo del bot BotMalo
 #SetEnvIfNoCase User-Agent "BotMalo/" spambot

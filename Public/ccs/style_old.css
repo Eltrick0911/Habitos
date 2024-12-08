@@ -233,6 +233,7 @@ a {
   background-color: #fff;
   border-radius: 0.3rem;
   padding: 2rem;
+  margin-bottom: 2rem;
 }
 .main .card .card-header {
   display: flex;
@@ -278,6 +279,7 @@ a {
   grid-template-areas: "profile name name check times" "profile title title check times" "profile date time check times";
   column-gap: 1.5rem;
   row-gap: 0;
+  margin-bottom: 1rem;
 }
 .main .card .appointment .image {
   grid-area: profile;
@@ -414,6 +416,7 @@ a {
 .notifications ul {
   display: grid;
   gap: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .notifications .more {
@@ -471,4 +474,13 @@ a {
 
 .btn-logout:hover {
   background-color: #6c4ef5;
+}
+
+.tips {
+  margin-top: 2rem;
+  padding: 1rem;
+}
+
+.notifications {
+  margin-top: 2rem;
 }

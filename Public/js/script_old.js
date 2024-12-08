@@ -32,7 +32,8 @@ $(document).ready(function() {
                         habitosContainer.empty();
 
                         if (response.data && response.data.length > 0) {
-                            response.data.forEach(habito => {
+                            // Limitar a los primeros 3 hábitos
+                            response.data.slice(0, 3).forEach(habito => {
                                 const habitoHTML = `
                                     <div class="appointment">
                                         <span class="name">${habito.nombre_habito}</span>
@@ -74,7 +75,6 @@ $(document).ready(function() {
         });
     }
 
-    // Mantener el código existente
     $(".btn-appointment").click(function() {
         cargarContenido("../../Routes/views/AgregarHabito.html");
     });
@@ -138,7 +138,7 @@ $(document).ready(function() {
         gradientFill.addColorStop(1, "rgba(255,255,255, .3)");
   
         var data = {
-            labels: ["", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", ""],
+            labels: ["", "Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", ""],
             datasets: [{
                 backgroundColor: "rgba(0,0,0,0)",
                 borderColor: "#6d6ee3",
@@ -264,4 +264,79 @@ $(document).ready(function() {
     });
     // Cargar hábitos al iniciar la página
     cargarHabitos();
+
+    // Lista de consejos en español
+    const consejos = [
+        "Prioriza una alimentación balanceada.",
+        "Haz ejercicio regularmente.",
+        "Duerme al menos 8 horas diarias.",
+        "Mantén una actitud positiva.",
+        "Hidrátate adecuadamente.",
+        "Practica la meditación o el yoga.",
+        "Establece metas alcanzables.",
+        "Dedica tiempo a tus hobbies.",
+        "Mantén una buena postura.",
+        "Evita el estrés innecesario."
+    ];
+
+    // Lista de notificaciones en español
+    const notificaciones = [
+        "Revisa tu correo para nuevas actualizaciones.",
+        "Tu suscripción vence pronto.",
+        "Si tienes algun problema con tu cuenta, puedes contactarnos.",
+        "Recuerda completar tu perfil.",
+        "Revisa constantemente los chats de apoyo.",
+        "Eres nuestra prioridad, cuida tu salud mental.",
+        "Intentaremos mejorar tu experiencia con nosotros.",
+        "Puedes modificar tus habitos en la seccion de habitos.",
+        "Recuerda cerrar sesion cuando no estes usando la app.",
+        "Gracias por usar nuestra app."
+    ];
+
+    // Función para mostrar un consejo aleatorio
+    function mostrarConsejoAleatorio() {
+        const indiceAleatorio = Math.floor(Math.random() * consejos.length);
+        const consejo = consejos[indiceAleatorio];
+        const tipsElement = $('.news-list');
+        tipsElement.empty(); // Limpiar los tips actuales
+
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <a href="#" class="news">
+                <span class="title">${consejo}</span>
+                <i class="fas fa-caret-right"></i>
+                <hr />
+            </a>
+        `;
+        tipsElement.append(li);
+    }
+
+    // Función para mostrar una notificación aleatoria
+    function mostrarNotificacionAleatoria() {
+        const indiceAleatorio = Math.floor(Math.random() * notificaciones.length);
+        const notificacion = notificaciones[indiceAleatorio];
+        const notificationsElement = $('.notifications .card-body ul');
+        notificationsElement.empty(); // Limpiar las notificaciones actuales
+
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <a href="#" class="notification">
+                <div class="dot green"></div>
+                <span class="title">${notificacion}</span>
+                <span class="date">Justo ahora</span>
+            </a>
+        `;
+        notificationsElement.append(li);
+    }
+
+    // Llama a las funciones para mostrar un consejo y una notificación al cargar la página
+    mostrarConsejoAleatorio();
+    mostrarNotificacionAleatoria();
+    generarGrafico();
+
+    // Cambia el consejo cada 10 segundos
+    setInterval(mostrarConsejoAleatorio, 10000);
+
+    // Cambia la notificación cada 10 minutos
+    setInterval(mostrarNotificacionAleatoria, 600000);
 });

@@ -1,8 +1,7 @@
-#RewriteEngine On
-#Options All -Indexes
+RewriteEngine On
 
-#prevenir acceso al archivo .htaccess
-#<files .htaccess>
-#order allow,deny
-#deny from all
-#</files>
+# Reescribe la URL para que 'localhost/Habitos' apunte a 'index.php?route=Habitos'
+RewriteRule ^Habitos/?$ index.php?route=Habitos [QSA,L]
+
+# Reescribe la URL para que 'localhost/archivo' apunte a 'archivo.html'
+RewriteRule ^archivo/?$ archivo.html [QSA,L]
