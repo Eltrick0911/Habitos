@@ -58,10 +58,14 @@ $(document).ready(function() {
         success: function(response) {
           console.log('Respuesta exitosa:', response);
           if (response.success) {
-            // Guardar datos en sessionStorage
-            sessionStorage.setItem('usuario_id', response.usuario_id);
-            sessionStorage.setItem('nombre_completo', response.nombre_completo);
-            sessionStorage.setItem('s_usuario', response.email);
+            // Almacenar el token JWT
+            localStorage.setItem('jwt_token', response.token);
+            
+            // Guardar datos del usuario
+            localStorage.setItem('usuario_id', response.usuario_id);
+            localStorage.setItem('nombre_completo', response.nombre_completo);
+            localStorage.setItem('tipo_usuario', response.tipo_usuario);
+            localStorage.setItem('email', response.email);
             
             // Redireccionar según el tipo de usuario
             if (response.tipo_usuario === 'admin') {

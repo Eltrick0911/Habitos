@@ -1,23 +1,21 @@
 $(document).ready(function() {
     // Cargar nombre del usuario
-    const nombreCompleto = sessionStorage.getItem('nombre_completo');
-    const usuario_id = sessionStorage.getItem('usuario_id');
+    const datosSesion = obtenerDatosSesion();
     
-    console.log('Datos de sesión:', {
-        nombreCompleto,
-        usuario_id
-    });
+    console.log('Datos de sesión:', datosSesion);
 
-    if (nombreCompleto) {
-        $('.profile select').html(`<option value="${nombreCompleto}">${nombreCompleto}</option>`);
+    if (datosSesion.nombreCompleto) {
+        $('.profile select').html(`<option value="${datosSesion.nombreCompleto}">${datosSesion.nombreCompleto}</option>`);
     }
 
     // Función para cargar hábitos desde el servidor
     function cargarHabitos() {
-        const usuario_id = sessionStorage.getItem('usuario_id');
+        const token = localStorage.getItem('jwt_token');
+        const usuario_id = localStorage.getItem('usuario_id');
         
-        if (!usuario_id) {
-            console.error('No se encontró ID de usuario');
+        if (!token || !usuario_id) {
+            console.error('No se encontró token o ID de usuario');
+            window.location.href = '/Habitos/Public/Index.html';
             return;
         }
 
@@ -258,7 +256,7 @@ $(document).ready(function() {
     }
     $('#logoutButton').click(function() {
         // Limpiar datos de sesión
-        sessionStorage.clear();
+        localStorage.clear();
         // Redirigir a la página de inicio de sesión
         window.location.href = 'http://localhost/Habitos/Public/Index.html';
     });
@@ -340,3 +338,10 @@ $(document).ready(function() {
     // Cambia la notificación cada 10 minutos
     setInterval(mostrarNotificacionAleatoria, 600000);
 });
+
+function obtenerDatosSesion() {
+    return {
+        nombreCompleto: localStorage.getItem('nombre_completo'),
+        usuario_id: localStorage.getItem('usuario_id')
+    };
+}

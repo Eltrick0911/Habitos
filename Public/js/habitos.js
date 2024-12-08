@@ -1,8 +1,11 @@
 $(document).ready(function() {
-    const usuario_id = sessionStorage.getItem('usuario_id');
-    if (!usuario_id) {
+    // Verificar autenticación
+    const token = localStorage.getItem('jwt_token');
+    const usuario_id = localStorage.getItem('usuario_id');
+    
+    if (!token || !usuario_id) {
         alert('Debe iniciar sesión para ver sus hábitos');
-        window.location.href = '/Habitos/login.html';
+        window.location.href = '/Habitos/Public/Index.html';
         return;
     }
 
@@ -10,6 +13,9 @@ $(document).ready(function() {
     $.ajax({
         url: `http://localhost/Habitos/api-rest/api/consultar_habito.php?usuario_id=${usuario_id}`,
         type: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + token
+        },
         xhrFields: {
             withCredentials: true
         },
@@ -28,6 +34,8 @@ $(document).ready(function() {
 });
 
 function mostrarHabitos(habitos) {
+    console.log('Mostrando hábitos:', habitos);
+    
     const container = $('#listaHabitos');
     container.empty();
 
@@ -37,8 +45,11 @@ function mostrarHabitos(habitos) {
     }
 
     habitos.forEach(habito => {
+        console.log('Procesando hábito:', habito);
+        console.log('ID del hábito:', habito.id_habito);
+        
         const card = `
-            <div class="habito-card">
+            <div class="habito-card" data-id="${habito.id_habito}">
                 <div class="habito-header">
                     <span class="habito-titulo">${habito.nombre_habito}</span>
                     <span class="habito-estado estado-${habito.estado.toLowerCase()}">${habito.estado}</span>
@@ -63,46 +74,30 @@ function mostrarHabitos(habitos) {
 
 // Función para cargar la vista de modificar hábito
 function cargarModificarHabito(id_habito) {
-    console.log('Cargando modificar hábito con ID:', id_habito);
-    
     if (!id_habito) {
-        console.error('No se proporcionó ID del hábito');
+        alert('Error: No se pudo identificar el hábito');
         return;
     }
 
-    sessionStorage.setItem('habito_id', id_habito);
+    const token = localStorage.getItem('jwt_token');
+    const usuario_id = localStorage.getItem('usuario_id');
     
-    // Cargar el formulario en el contenedor
-    $('#contenidoDinamico').load('/Habitos/src/Routes/views/ModificarHabito.html', function() {
-        const usuario_id = sessionStorage.getItem('usuario_id');
-        
-        // Cargar los datos del hábito
-        $.ajax({
-            url: 'http://localhost/Habitos/api-rest/api/consultar_habito.php',
-            type: 'GET',
-            data: {
-                id: id_habito,
-                usuario_id: usuario_id
-            },
-            success: function(response) {
-                console.log('Datos del hábito:', response);
-                if (response && response.status === 'success' && response.data) {
-                    const habito = response.data[0]; // Tomar el primer elemento del array
-                    console.log('Datos a cargar en el formulario:', habito); // Debug
+    if (!token || !usuario_id) {
+        alert('Debe iniciar sesión para modificar hábitos');
+        window.location.href = '/Habitos/Public/Index.html';
+        return;
+    }
 
-                    // Asegurar que el id_habito se establezca correctamente
-                    $('#id_habito').val(id_habito);
-                    $('#nombre_habito').val(habito.nombre_habito || '');
-                    $('#descripcion_habito').val(habito.descripcion_habito || '');
-                    $('#categoria_habito').val(habito.categoria_habito || 'sueño');
-                    $('#objetivo_habito').val(habito.objetivo_habito || '');
-                    $('#frecuencia').val(habito.frecuencia || 'diaria');
-                    $('#duracion_estimada').val(habito.duracion_estimada || '');
-                    $('#estado').val(habito.estado || 'activo');
-                    $('#fecha_inicio').val(formatearFecha(habito.fecha_inicio));
-                    $('#fecha_estimacion_final').val(formatearFecha(habito.fecha_estimacion_final));
-                }
-            }
+    // Primero almacenar el ID
+    localStorage.setItem('habito_id_temp', id_habito);
+
+    // Luego cargar el formulario
+    $('#contenidoDinamico').load('/Habitos/src/Routes/views/ModificarHabito.html', function() {
+        // Inicializar el script después de cargar el HTML
+        $.getScript('/Habitos/Public/js/ModificarHabito.js')
+        .fail(function(jqxhr, settings, exception) {
+            console.error('Error al cargar el script:', exception);
+            localStorage.removeItem('habito_id_temp'); // Limpiar en caso de error
         });
     });
 }
@@ -120,11 +115,11 @@ function formatearFecha(fecha) {
     }
 }
 
-// Mantener solo este manejador de eventos global
+// Actualizar el manejador del formulario
 $(document).on('submit', '#modificarHabitForm', function(e) {
     e.preventDefault();
-    console.log('Enviando formulario de modificación...');
-
+    const token = localStorage.getItem('jwt_token');
+    
     const formData = {
         id_habito: $('#id_habito').val(),
         nombre_habito: $('#nombre_habito').val(),
@@ -136,34 +131,27 @@ $(document).on('submit', '#modificarHabitForm', function(e) {
         estado: $('#estado').val(),
         fecha_inicio: $('#fecha_inicio').val(),
         fecha_estimacion_final: $('#fecha_estimacion_final').val(),
-        usuario_id: sessionStorage.getItem('usuario_id')
+        usuario_id: localStorage.getItem('usuario_id')
     };
-
-    console.log('Datos a enviar:', formData);
 
     $.ajax({
         url: 'http://localhost/Habitos/api-rest/api/actualizar_habito.php',
-        type: 'POST',
+        type: 'PUT',
+        headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+        },
         data: JSON.stringify(formData),
-        contentType: 'application/json',
         success: function(response) {
-            console.log('Respuesta del servidor:', response);
-            if (response.message) {
+            if (response.status === 'success') {
                 alert('Hábito modificado exitosamente');
-                cargarContenido('Habitos.html');
+                window.location.href = '/Habitos/src/Routes/views/Habitos.html';
             } else {
-                alert('Error al modificar el hábito: ' + (response.error || 'Error desconocido'));
+                alert('Error al modificar el hábito: ' + response.message);
             }
         },
         error: function(xhr, status, error) {
-            console.error('Error en la petición:', {
-                status: xhr.status,
-                statusText: xhr.statusText,
-                responseText: xhr.responseText
-            });
-            if (xhr.responseText.startsWith('<!DOCTYPE')) {
-                console.error('La respuesta parece ser HTML en lugar de JSON.');
-            }
+            console.error('Error:', error);
             alert('Error al modificar el hábito');
         }
     });
@@ -188,10 +176,20 @@ function cargarContenido(pagina) {
 }
 
 function cargarHabitos() {
-    const usuario_id = sessionStorage.getItem('usuario_id');
+    const token = localStorage.getItem('jwt_token');
+    const usuario_id = localStorage.getItem('usuario_id');
+    
+    if (!token || !usuario_id) {
+        console.error('No se encontró token o ID de usuario');
+        return;
+    }
+
     $.ajax({
         url: `http://localhost/Habitos/api-rest/api/consultar_habito.php?usuario_id=${usuario_id}`,
         type: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + token
+        },
         success: function(response) {
             if (response.status === 'success') {
                 mostrarHabitos(response.data);

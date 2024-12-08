@@ -26,6 +26,8 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once "../includes/clases/clase_usuario.php";
+require_once "../../src/config/Security.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Habitos/vendor/autoload.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
@@ -59,8 +61,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $nombre_completo = $datos_usuario['nombre'] . ' ' . $datos_usuario['apellidos'];
             $_SESSION['nombre_completo'] = $nombre_completo;
             
+            // Datos del usuario para el token
+            $userData = [
+                'id' => $resultado['id_usuario'],
+                'email' => $correo_electronico,
+                'tipo_usuario' => $resultado['tipo_usuario']
+            ];
+            // Generar el JWT    
+            $security = new \App\config\Security();
+            $key = $security->secretKey();
+            $jwt = $security->createTokenJwt($key, $userData);
+
             echo json_encode([
                 'success' => true,
+                'token' => $jwt, // Enviar el token al cliente
                 'tipo_usuario' => $resultado['tipo_usuario'],
                 'nombre_completo' => $nombre_completo,
                 'usuario_id' => $resultado['id_usuario'],

@@ -1,9 +1,9 @@
 $(document).ready(function() {
     // Verificar si hay usuario logueado
-    const usuario_id = sessionStorage.getItem('usuario_id');
-    if (!usuario_id) {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) {
         alert('Debe iniciar sesión para agregar hábitos');
-        window.location.href = '/Habitos/login.html';
+        window.location.href = '/Habitos/Public/Index.html';
         return;
     }
 
@@ -39,6 +39,9 @@ $(document).ready(function() {
         $.ajax({
             url: 'http://localhost/Habitos/api-rest/api/crear_habito.php',
             type: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt_token')
+            },
             contentType: 'application/json',
             data: JSON.stringify(datosHabito),
             xhrFields: {
