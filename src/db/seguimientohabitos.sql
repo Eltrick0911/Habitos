@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 05-12-2024 a las 05:42:21
+-- Tiempo de generación: 09-12-2024 a las 04:55:40
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -20,11 +20,19 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `seguimientohabitos`
 --
+CREATE DATABASE IF NOT EXISTS `seguimientohabitos` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `seguimientohabitos`;
 
 DELIMITER $$
 --
 -- Procedimientos
 --
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ActualizarComentario` (IN `p_id_comentario_habito` INT, IN `p_comentario` TEXT)   BEGIN
+    UPDATE `comentario_habito`
+    SET `comentario` = p_comentario
+    WHERE `id_comentario_habito` = p_id_comentario_habito;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `ActualizarDesafio` (IN `p_id_desafio` INT, IN `p_nombre_desafio` VARCHAR(100), IN `p_descripcion_desafio` TEXT, IN `p_fecha_inicio` DATE, IN `p_fecha_finalizacion` DATE, IN `p_num_participantes` INT, IN `p_habito_asociado` INT, IN `p_recompensa_desafio` VARCHAR(255), IN `p_estado` ENUM('activo','finalizado'))   BEGIN
     UPDATE Desafio
     SET nombre_desafio = p_nombre_desafio,
@@ -48,16 +56,6 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `ActualizarEstadisticasUsuario` (IN 
         fechas_mayores_avances = p_fechas_mayores_avances,
         graficos_progreso = p_graficos_progreso
     WHERE id_estadistica = p_id_estadistica;
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `ActualizarGrupoApoyo` (IN `p_id_grupo` INT, IN `p_nombre_grupo` VARCHAR(100), IN `p_descripcion_grupo` TEXT, IN `p_fecha_creacion` DATE, IN `p_habito_compartido` INT, IN `p_mensajes_interacciones` TEXT)   BEGIN
-    UPDATE Grupo_Apoyo
-    SET nombre_grupo = p_nombre_grupo,
-        descripcion_grupo = p_descripcion_grupo,
-        fecha_creacion = p_fecha_creacion,
-        habito_compartido = p_habito_compartido,
-        mensajes_interacciones = p_mensajes_interacciones
-    WHERE id_grupo = p_id_grupo;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `ActualizarHabito` (IN `p_id_habito` INT, IN `p_nombre_habito` VARCHAR(100), IN `p_descripcion_habito` TEXT, IN `p_categoria_habito` VARCHAR(50), IN `p_objetivo_habito` VARCHAR(100), IN `p_frecuencia` ENUM('diaria','semanal','mensual','personalizada'), IN `p_duracion_estimada` INT, IN `p_estado` ENUM('activo','pausado','completado'), IN `p_fecha_inicio` DATE, IN `p_fecha_estimacion_final` DATE)   BEGIN
@@ -140,16 +138,16 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `ActualizarUsuario` (IN `p_id_usuari
     WHERE id_usuario = p_id_usuario;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `EliminarComentario` (IN `p_id_comentario_habito` INT)   BEGIN
+    DELETE FROM `comentario_habito` WHERE `id_comentario_habito` = p_id_comentario_habito;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `EliminarDesafio` (IN `p_id_desafio` INT)   BEGIN
     DELETE FROM Desafio WHERE id_desafio = p_id_desafio;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `EliminarEstadisticasUsuario` (IN `p_id_estadistica` INT)   BEGIN
     DELETE FROM Estadisticas_Usuario WHERE id_estadistica = p_id_estadistica;
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `EliminarGrupoApoyo` (IN `p_id_grupo` INT)   BEGIN
-    DELETE FROM Grupo_Apoyo WHERE id_grupo = p_id_grupo;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `EliminarHabito` (IN `p_id_habito` INT)   BEGIN
@@ -180,6 +178,11 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `EliminarUsuario` (IN `p_id_usuario`
     DELETE FROM Usuario WHERE id_usuario = p_id_usuario;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `InsertarComentario` (IN `p_grupo_id` INT, IN `p_usuario_id` INT, IN `p_comentario` TEXT, IN `p_fecha_comentario` DATE)   BEGIN
+    INSERT INTO `comentario_habito` (`grupo_id`, `usuario_id`, `comentario`, `fecha_comentario`)
+    VALUES (p_grupo_id, p_usuario_id, p_comentario, p_fecha_comentario);
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `InsertarDesafio` (IN `p_nombre_desafio` VARCHAR(100), IN `p_fecha_inicio` DATE, IN `p_fecha_finalizacion` DATE, IN `p_num_participantes` INT, IN `p_habito_asociado` INT, IN `p_recompensa_desafio` VARCHAR(255), IN `p_estado` ENUM('activo','finalizado'))   BEGIN
     INSERT INTO Desafio (nombre_desafio,nombre_desafio,fecha_inicio,fecha_finalizacion,num_participantes,habito_asociado,recompensa_desafio,estado)
     Value (p_nombre_desafio,p_nombre_desafio,p_fecha_inicio,p_fecha_finalizacion,p_num_participantes,p_habito_asociado,p_recompensa_desafio,p_estado);
@@ -190,14 +193,58 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `InsertarEstadisticasUsuario` (IN `p
     VALUES (p_usuario_id, p_num_habitos_activos, p_porcentaje_habitos_completados, p_dias_consecutivos_habitos_completados, p_promedio_habitos_cumplidos, p_fechas_mayores_avances, p_graficos_progreso);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `InsertarGrupoApoyo` (IN `p_nombre_grupo` VARCHAR(100), IN `p_descripcion_grupo` TEXT, IN `p_fecha_creacion` DATE, IN `p_habito_compartido` INT, IN `p_mensajes_interacciones` TEXT)   BEGIN
-    INSERT INTO Grupo_Apoyo (nombre_grupo, descripcion_grupo, fecha_creacion, habito_compartido, mensajes_interacciones)
-    VALUES (p_nombre_grupo, p_descripcion_grupo, p_fecha_creacion, p_habito_compartido, p_mensajes_interacciones);
-END$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `InsertarHabito` (IN `p_nombre_habito` VARCHAR(100), IN `p_descripcion_habito` TEXT, IN `p_categoria_habito` VARCHAR(50), IN `p_objetivo_habito` VARCHAR(100), IN `p_frecuencia` VARCHAR(20), IN `p_duracion_estimada` INT, IN `p_estado` VARCHAR(20), IN `p_fecha_inicio` DATE, IN `p_fecha_estimacion_final` DATE, IN `p_usuario_id` INT, OUT `p_id_habito` INT)   BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `InsertarHabito` (IN `p_nombre_habito` VARCHAR(100), IN `p_descripcion_habito` TEXT, IN `p_categoria_habito` VARCHAR(50), IN `p_objetivo_habito` VARCHAR(100), IN `p_frecuencia` ENUM('diaria','semanal','mensual','personalizada'), IN `p_duracion_estimada` INT, IN `p_estado` ENUM('activo','pausado','completado'), IN `p_fecha_inicio` DATE, IN `p_fecha_estimacion_final` DATE)   BEGIN
-    INSERT INTO Habito (nombre_habito, descripcion_habito, categoria_habito, objetivo_habito, frecuencia, duracion_estimada, estado, fecha_inicio, fecha_estimacion_final)
-    VALUES (p_nombre_habito, p_descripcion_habito, p_categoria_habito, p_objetivo_habito, p_frecuencia, p_duracion_estimada, p_estado, p_fecha_inicio, p_fecha_estimacion_final);
+    START TRANSACTION;
+        -- Validación de parámetros para frecuencia
+        IF p_frecuencia NOT IN ('diaria', 'semanal', 'mensual', 'personalizada') THEN
+            SIGNAL SQLSTATE '45000' 
+            SET MESSAGE_TEXT = 'Frecuencia inválida. Debe ser diaria, semanal, mensual o personalizada.';
+        END IF;
+
+        -- Validación de parámetros para estado
+        IF p_estado NOT IN ('activo', 'pausado', 'completado') THEN
+            SIGNAL SQLSTATE '45000' 
+            SET MESSAGE_TEXT = 'Estado inválido. Debe ser activo, pausado o completado.';
+        END IF;
+
+        -- Inserción en la tabla Habito
+        INSERT INTO Habito (
+            nombre_habito, 
+            descripcion_habito, 
+            categoria_habito, 
+            objetivo_habito, 
+            frecuencia, 
+            duracion_estimada, 
+            estado, 
+            fecha_inicio, 
+            fecha_estimacion_final
+        )
+        VALUES (
+            p_nombre_habito, 
+            p_descripcion_habito, 
+            p_categoria_habito, 
+            p_objetivo_habito, 
+            p_frecuencia, 
+            p_duracion_estimada, 
+            p_estado, 
+            p_fecha_inicio, 
+            p_fecha_estimacion_final
+        );
+
+        -- Obtener el ID del hábito recién insertado
+        SET p_id_habito = LAST_INSERT_ID();
+
+        -- Insertar la relación usuario-hábito
+        INSERT INTO usuario_habito (usuario_id, habito_id)
+        VALUES (p_usuario_id, p_id_habito);
+
+    COMMIT;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `InsertarObjetivo` (IN `p_habito_id` INT, IN `p_descripcion_objetivo` TEXT, IN `p_meta_cuantificable` VARCHAR(100), IN `p_estado` ENUM('pendiente','completado','en_progreso'), IN `p_fecha_inicio` DATE, IN `p_fecha_finalizacion_estimada` DATE, IN `p_notas_adicionales` TEXT)   BEGIN
@@ -228,6 +275,10 @@ END$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `InsertarUsuario` (IN `p_nombre` VARCHAR(50), IN `p_apellidos` VARCHAR(50), IN `p_correo_electronico` VARCHAR(100), IN `p_contrasena` VARCHAR(255), IN `p_fecha_nacimiento` DATE, IN `p_genero` VARCHAR(10), IN `p_pais_region` VARCHAR(50), IN `p_nivel_suscripcion` ENUM('gratuita','premium'), IN `p_preferencias_notificacion` VARCHAR(255))   BEGIN
     INSERT INTO Usuario (nombre, apellidos, correo_electronico, contrasena, fecha_nacimiento, genero, pais_region, nivel_suscripcion, preferencias_notificacion)
     VALUES (p_nombre, p_apellidos, p_correo_electronico, p_contrasena, p_fecha_nacimiento, p_genero, p_pais_region, p_nivel_suscripcion, p_preferencias_notificacion);
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ObtenerComentariosPorGrupo` (IN `p_grupo_id` INT)   BEGIN
+    SELECT * FROM `comentario_habito` WHERE `grupo_id` = p_grupo_id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `validar_login` (IN `p_correo_electronico` VARCHAR(100), IN `p_contrasena` VARCHAR(255), OUT `p_resultado` INT, OUT `p_tipo_usuario` VARCHAR(10))   BEGIN
@@ -280,11 +331,23 @@ CREATE TABLE `comentarios_usuario` (
 
 CREATE TABLE `comentario_habito` (
   `id_comentario_habito` int(11) NOT NULL,
-  `habito_id` int(11) DEFAULT NULL,
+  `grupo_id` int(11) NOT NULL,
   `usuario_id` int(11) DEFAULT NULL,
   `comentario` text DEFAULT NULL,
   `fecha_comentario` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `comentario_habito`
+--
+
+INSERT INTO `comentario_habito` (`id_comentario_habito`, `grupo_id`, `usuario_id`, `comentario`, `fecha_comentario`) VALUES(1, 1, 1, 'Tomar melatonina me ha ayudado a conciliar mejor el sueño', '2024-12-07');
+INSERT INTO `comentario_habito` (`id_comentario_habito`, `grupo_id`, `usuario_id`, `comentario`, `fecha_comentario`) VALUES(2, 2, 1, 'Comer sano es bueno para la Salud', '2024-12-07');
+INSERT INTO `comentario_habito` (`id_comentario_habito`, `grupo_id`, `usuario_id`, `comentario`, `fecha_comentario`) VALUES(3, 2, 1, 'Otro comentario de Prueba', '2024-12-07');
+INSERT INTO `comentario_habito` (`id_comentario_habito`, `grupo_id`, `usuario_id`, `comentario`, `fecha_comentario`) VALUES(4, 1, 1, 'Por que no se borra el comentario\n', '2024-12-07');
+INSERT INTO `comentario_habito` (`id_comentario_habito`, `grupo_id`, `usuario_id`, `comentario`, `fecha_comentario`) VALUES(5, 2, 1, 'Prueba si recarga', '2024-12-07');
+INSERT INTO `comentario_habito` (`id_comentario_habito`, `grupo_id`, `usuario_id`, `comentario`, `fecha_comentario`) VALUES(6, 1, 1, 'Prueba de Recarga', '2024-12-07');
+INSERT INTO `comentario_habito` (`id_comentario_habito`, `grupo_id`, `usuario_id`, `comentario`, `fecha_comentario`) VALUES(7, 1, 1, 'Prueba de recarga2', '2024-12-07');
 
 -- --------------------------------------------------------
 
@@ -362,11 +425,23 @@ CREATE TABLE `estadisticas_usuario` (
 CREATE TABLE `grupo_apoyo` (
   `id_grupo` int(11) NOT NULL,
   `nombre_grupo` varchar(100) DEFAULT NULL,
-  `descripcion_grupo` text DEFAULT NULL,
-  `fecha_creacion` date DEFAULT NULL,
-  `habito_compartido` int(11) DEFAULT NULL,
-  `mensajes_interacciones` text DEFAULT NULL
+  `tipo_habito` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `grupo_apoyo`
+--
+
+INSERT INTO `grupo_apoyo` (`id_grupo`, `nombre_grupo`, `tipo_habito`) VALUES(1, 'Sueño', 'sueno');
+INSERT INTO `grupo_apoyo` (`id_grupo`, `nombre_grupo`, `tipo_habito`) VALUES(2, 'Alimentación', 'alimentacion');
+INSERT INTO `grupo_apoyo` (`id_grupo`, `nombre_grupo`, `tipo_habito`) VALUES(3, 'Ejercicio', 'ejercicio');
+INSERT INTO `grupo_apoyo` (`id_grupo`, `nombre_grupo`, `tipo_habito`) VALUES(4, 'Estudio', 'estudio');
+INSERT INTO `grupo_apoyo` (`id_grupo`, `nombre_grupo`, `tipo_habito`) VALUES(5, 'Recreación', 'recreacion');
+INSERT INTO `grupo_apoyo` (`id_grupo`, `nombre_grupo`, `tipo_habito`) VALUES(6, 'Trabajo', 'trabajo');
+INSERT INTO `grupo_apoyo` (`id_grupo`, `nombre_grupo`, `tipo_habito`) VALUES(7, 'Trabajos del Hogar', 'trabajos_del_hogar');
+INSERT INTO `grupo_apoyo` (`id_grupo`, `nombre_grupo`, `tipo_habito`) VALUES(8, 'Cuidado Personal', 'cuidado_personal');
+INSERT INTO `grupo_apoyo` (`id_grupo`, `nombre_grupo`, `tipo_habito`) VALUES(9, 'Social', 'social');
+INSERT INTO `grupo_apoyo` (`id_grupo`, `nombre_grupo`, `tipo_habito`) VALUES(10, 'Finanzas', 'finanzas');
 
 -- --------------------------------------------------------
 
@@ -391,17 +466,21 @@ CREATE TABLE `habito` (
 -- Volcado de datos para la tabla `habito`
 --
 
-INSERT INTO `habito` (`id_habito`, `nombre_habito`, `descripcion_habito`, `categoria_habito`, `objetivo_habito`, `frecuencia`, `duracion_estimada`, `estado`, `fecha_inicio`, `fecha_estimacion_final`) VALUES
-(1, 'Ejercicio Diario', 'Hacer ejercicio durante 30 minutos cada día', 'Salud', 'Mejorar salud', 'diaria', 30, 'activo', '2024-01-01', '2024-01-31'),
-(2, 'Leer Libros', 'Leer al menos 20 páginas de un libro cada día', 'Educación', 'Aumentar conocimiento', 'diaria', 30, 'activo', '2024-01-01', '2024-01-31'),
-(3, 'Meditar', 'Meditar durante 15 minutos cada mañana', 'Bienestar', 'Reducir estrés', 'diaria', 30, 'activo', '2024-01-01', '2024-01-31'),
-(4, 'Ahorro Semanal', 'Ahorrar una cantidad fija de dinero cada semana', 'Finanzas', 'Mejorar finanzas', 'semanal', 4, 'activo', '2024-01-01', '2024-01-28'),
-(5, 'Estudiar Programación', 'Estudiar programación durante 1 hora cada día', 'Educación', 'Mejorar habilidades', 'diaria', 30, 'activo', '2024-01-01', '2024-01-31'),
-(6, 'Correr', 'Correr 5 km cada semana', 'Salud', 'Mejorar condición física', 'semanal', 4, 'activo', '2024-01-01', '2024-01-28'),
-(7, 'Dieta Saludable', 'Seguir una dieta saludable todos los días', 'Salud', 'Mejorar alimentación', 'diaria', 30, 'activo', '2024-01-01', '2024-01-31'),
-(8, 'Aprender Inglés', 'Estudiar inglés durante 1 hora cada día', 'Educación', 'Mejorar habilidades lingüísticas', 'diaria', 30, 'activo', '2024-01-01', '2024-01-31'),
-(9, 'Escribir Diario', 'Escribir en un diario cada noche', 'Bienestar', 'Reflexionar sobre el día', 'diaria', 30, 'activo', '2024-01-01', '2024-01-31'),
-(10, 'Desarrollo Personal', 'Leer libros de desarrollo personal cada semana', 'Bienestar', 'Mejorar crecimiento personal', 'semanal', 4, 'activo', '2024-01-01', '2024-01-28');
+INSERT INTO `habito` (`id_habito`, `nombre_habito`, `descripcion_habito`, `categoria_habito`, `objetivo_habito`, `frecuencia`, `duracion_estimada`, `estado`, `fecha_inicio`, `fecha_estimacion_final`) VALUES(1, 'Ejercicio Diario', 'Hacer ejercicio durante 30 minutos cada día', 'Salud', 'Mejorar salud', 'diaria', 30, 'activo', '2024-01-01', '2024-01-31');
+INSERT INTO `habito` (`id_habito`, `nombre_habito`, `descripcion_habito`, `categoria_habito`, `objetivo_habito`, `frecuencia`, `duracion_estimada`, `estado`, `fecha_inicio`, `fecha_estimacion_final`) VALUES(2, 'Leer Libros', 'Leer al menos 20 páginas de un libro cada día', 'Educación', 'Aumentar conocimiento', 'diaria', 30, 'activo', '2024-01-01', '2024-01-31');
+INSERT INTO `habito` (`id_habito`, `nombre_habito`, `descripcion_habito`, `categoria_habito`, `objetivo_habito`, `frecuencia`, `duracion_estimada`, `estado`, `fecha_inicio`, `fecha_estimacion_final`) VALUES(3, 'Meditar', 'Meditar durante 15 minutos cada mañana', 'Bienestar', 'Reducir estrés', 'diaria', 30, 'activo', '2024-01-01', '2024-01-31');
+INSERT INTO `habito` (`id_habito`, `nombre_habito`, `descripcion_habito`, `categoria_habito`, `objetivo_habito`, `frecuencia`, `duracion_estimada`, `estado`, `fecha_inicio`, `fecha_estimacion_final`) VALUES(4, 'Ahorro Semanal', 'Ahorrar una cantidad fija de dinero cada semana', 'Finanzas', 'Mejorar finanzas', 'semanal', 4, 'activo', '2024-01-01', '2024-01-28');
+INSERT INTO `habito` (`id_habito`, `nombre_habito`, `descripcion_habito`, `categoria_habito`, `objetivo_habito`, `frecuencia`, `duracion_estimada`, `estado`, `fecha_inicio`, `fecha_estimacion_final`) VALUES(5, 'Estudiar Programación', 'Estudiar programación durante 1 hora cada día', 'Educación', 'Mejorar habilidades', 'diaria', 30, 'activo', '2024-01-01', '2024-01-31');
+INSERT INTO `habito` (`id_habito`, `nombre_habito`, `descripcion_habito`, `categoria_habito`, `objetivo_habito`, `frecuencia`, `duracion_estimada`, `estado`, `fecha_inicio`, `fecha_estimacion_final`) VALUES(6, 'Correr', 'Correr 5 km cada semana', 'Salud', 'Mejorar condición física', 'semanal', 4, 'activo', '2024-01-01', '2024-01-28');
+INSERT INTO `habito` (`id_habito`, `nombre_habito`, `descripcion_habito`, `categoria_habito`, `objetivo_habito`, `frecuencia`, `duracion_estimada`, `estado`, `fecha_inicio`, `fecha_estimacion_final`) VALUES(7, 'Dieta Saludable', 'Seguir una dieta saludable todos los días', 'Salud', 'Mejorar alimentación', 'diaria', 30, 'activo', '2024-01-01', '2024-01-31');
+INSERT INTO `habito` (`id_habito`, `nombre_habito`, `descripcion_habito`, `categoria_habito`, `objetivo_habito`, `frecuencia`, `duracion_estimada`, `estado`, `fecha_inicio`, `fecha_estimacion_final`) VALUES(8, 'Aprender Inglés', 'Estudiar inglés durante 1 hora cada día', 'Educación', 'Mejorar habilidades lingüísticas', 'diaria', 30, 'activo', '2024-01-01', '2024-01-31');
+INSERT INTO `habito` (`id_habito`, `nombre_habito`, `descripcion_habito`, `categoria_habito`, `objetivo_habito`, `frecuencia`, `duracion_estimada`, `estado`, `fecha_inicio`, `fecha_estimacion_final`) VALUES(9, 'Escribir Diario', 'Escribir en un diario cada noche', 'Bienestar', 'Reflexionar sobre el día', 'diaria', 30, 'activo', '2024-01-01', '2024-01-31');
+INSERT INTO `habito` (`id_habito`, `nombre_habito`, `descripcion_habito`, `categoria_habito`, `objetivo_habito`, `frecuencia`, `duracion_estimada`, `estado`, `fecha_inicio`, `fecha_estimacion_final`) VALUES(10, 'Desarrollo Personal', 'Leer libros de desarrollo personal cada semana', 'Bienestar', 'Mejorar crecimiento personal', 'semanal', 4, 'activo', '2024-01-01', '2024-01-28');
+INSERT INTO `habito` (`id_habito`, `nombre_habito`, `descripcion_habito`, `categoria_habito`, `objetivo_habito`, `frecuencia`, `duracion_estimada`, `estado`, `fecha_inicio`, `fecha_estimacion_final`) VALUES(13, 'Siesta', 'Ir a Dormir', 'sueño', 'descansar', 'diaria', 50, 'activo', '2024-12-05', '2024-12-18');
+INSERT INTO `habito` (`id_habito`, `nombre_habito`, `descripcion_habito`, `categoria_habito`, `objetivo_habito`, `frecuencia`, `duracion_estimada`, `estado`, `fecha_inicio`, `fecha_estimacion_final`) VALUES(14, 'Estudio', 'Estudiar', 'estudio', 'Estudiar', 'semanal', 20, 'activo', '2024-12-07', '2024-12-30');
+INSERT INTO `habito` (`id_habito`, `nombre_habito`, `descripcion_habito`, `categoria_habito`, `objetivo_habito`, `frecuencia`, `duracion_estimada`, `estado`, `fecha_inicio`, `fecha_estimacion_final`) VALUES(15, 'Prueba de Modificacion', 'Ir a Dormir', 'sueño', 'descansar', 'diaria', 50, 'activo', '2024-12-05', '2024-12-18');
+INSERT INTO `habito` (`id_habito`, `nombre_habito`, `descripcion_habito`, `categoria_habito`, `objetivo_habito`, `frecuencia`, `duracion_estimada`, `estado`, `fecha_inicio`, `fecha_estimacion_final`) VALUES(16, 'Probar', 'Trabajar', 'trabajo', 'Terminar Trabajo', 'diaria', 2, 'pausado', '2024-12-13', '2024-12-25');
+INSERT INTO `habito` (`id_habito`, `nombre_habito`, `descripcion_habito`, `categoria_habito`, `objetivo_habito`, `frecuencia`, `duracion_estimada`, `estado`, `fecha_inicio`, `fecha_estimacion_final`) VALUES(17, 'Jugar Video Juegos', 'Jugar en mi consola', 'recreacion', 'Pasar el Juego', 'diaria', 20, 'activo', '2024-12-08', '2024-12-19');
 
 -- --------------------------------------------------------
 
@@ -437,17 +516,16 @@ CREATE TABLE `objetivo` (
 -- Volcado de datos para la tabla `objetivo`
 --
 
-INSERT INTO `objetivo` (`id_objetivo`, `habito_id`, `descripcion_objetivo`, `meta_cuantificable`, `estado`, `fecha_inicio`, `fecha_finalizacion_estimada`, `notas_adicionales`) VALUES
-(1, 1, 'Completar 30 días de ejercicio', '30 días consecutivos', 'en_progreso', '2024-01-01', '2024-01-31', 'Mantener la constancia'),
-(2, 2, 'Leer 600 páginas en un mes', '600 páginas', 'en_progreso', '2024-01-01', '2024-01-31', 'Disfrutar la lectura'),
-(3, 3, 'Meditar todos los días del mes', '30 días consecutivos', 'en_progreso', '2024-01-01', '2024-01-31', 'Reducir el estrés'),
-(4, 4, 'Ahorrar $1000 en un mes', '1000 dólares', 'en_progreso', '2024-01-01', '2024-01-31', 'Ser constante'),
-(5, 5, 'Estudiar programación 30 horas', '30 horas', 'en_progreso', '2024-01-01', '2024-01-31', 'Mejorar habilidades'),
-(6, 6, 'Correr 20 km en un mes', '20 km', 'en_progreso', '2024-01-01', '2024-01-31', 'Mejorar resistencia'),
-(7, 7, 'Seguir dieta saludable todo el mes', '30 días consecutivos', 'en_progreso', '2024-01-01', '2024-01-31', 'Mejorar alimentación'),
-(8, 8, 'Estudiar inglés 30 horas', '30 horas', 'en_progreso', '2024-01-01', '2024-01-31', 'Mejorar inglés'),
-(9, 9, 'Escribir en el diario todos los días', '30 días consecutivos', 'en_progreso', '2024-01-01', '2024-01-31', 'Escribir Diario'),
-(10, 10, 'Leer libros de desarrollo personal cada semana', '15 días consecutivos', 'en_progreso', '2024-01-01', '2024-01-31', 'Desarrollo Personal');
+INSERT INTO `objetivo` (`id_objetivo`, `habito_id`, `descripcion_objetivo`, `meta_cuantificable`, `estado`, `fecha_inicio`, `fecha_finalizacion_estimada`, `notas_adicionales`) VALUES(1, 1, 'Completar 30 días de ejercicio', '30 días consecutivos', 'en_progreso', '2024-01-01', '2024-01-31', 'Mantener la constancia');
+INSERT INTO `objetivo` (`id_objetivo`, `habito_id`, `descripcion_objetivo`, `meta_cuantificable`, `estado`, `fecha_inicio`, `fecha_finalizacion_estimada`, `notas_adicionales`) VALUES(2, 2, 'Leer 600 páginas en un mes', '600 páginas', 'en_progreso', '2024-01-01', '2024-01-31', 'Disfrutar la lectura');
+INSERT INTO `objetivo` (`id_objetivo`, `habito_id`, `descripcion_objetivo`, `meta_cuantificable`, `estado`, `fecha_inicio`, `fecha_finalizacion_estimada`, `notas_adicionales`) VALUES(3, 3, 'Meditar todos los días del mes', '30 días consecutivos', 'en_progreso', '2024-01-01', '2024-01-31', 'Reducir el estrés');
+INSERT INTO `objetivo` (`id_objetivo`, `habito_id`, `descripcion_objetivo`, `meta_cuantificable`, `estado`, `fecha_inicio`, `fecha_finalizacion_estimada`, `notas_adicionales`) VALUES(4, 4, 'Ahorrar $1000 en un mes', '1000 dólares', 'en_progreso', '2024-01-01', '2024-01-31', 'Ser constante');
+INSERT INTO `objetivo` (`id_objetivo`, `habito_id`, `descripcion_objetivo`, `meta_cuantificable`, `estado`, `fecha_inicio`, `fecha_finalizacion_estimada`, `notas_adicionales`) VALUES(5, 5, 'Estudiar programación 30 horas', '30 horas', 'en_progreso', '2024-01-01', '2024-01-31', 'Mejorar habilidades');
+INSERT INTO `objetivo` (`id_objetivo`, `habito_id`, `descripcion_objetivo`, `meta_cuantificable`, `estado`, `fecha_inicio`, `fecha_finalizacion_estimada`, `notas_adicionales`) VALUES(6, 6, 'Correr 20 km en un mes', '20 km', 'en_progreso', '2024-01-01', '2024-01-31', 'Mejorar resistencia');
+INSERT INTO `objetivo` (`id_objetivo`, `habito_id`, `descripcion_objetivo`, `meta_cuantificable`, `estado`, `fecha_inicio`, `fecha_finalizacion_estimada`, `notas_adicionales`) VALUES(7, 7, 'Seguir dieta saludable todo el mes', '30 días consecutivos', 'en_progreso', '2024-01-01', '2024-01-31', 'Mejorar alimentación');
+INSERT INTO `objetivo` (`id_objetivo`, `habito_id`, `descripcion_objetivo`, `meta_cuantificable`, `estado`, `fecha_inicio`, `fecha_finalizacion_estimada`, `notas_adicionales`) VALUES(8, 8, 'Estudiar inglés 30 horas', '30 horas', 'en_progreso', '2024-01-01', '2024-01-31', 'Mejorar inglés');
+INSERT INTO `objetivo` (`id_objetivo`, `habito_id`, `descripcion_objetivo`, `meta_cuantificable`, `estado`, `fecha_inicio`, `fecha_finalizacion_estimada`, `notas_adicionales`) VALUES(9, 9, 'Escribir en el diario todos los días', '30 días consecutivos', 'en_progreso', '2024-01-01', '2024-01-31', 'Escribir Diario');
+INSERT INTO `objetivo` (`id_objetivo`, `habito_id`, `descripcion_objetivo`, `meta_cuantificable`, `estado`, `fecha_inicio`, `fecha_finalizacion_estimada`, `notas_adicionales`) VALUES(10, 10, 'Leer libros de desarrollo personal cada semana', '15 días consecutivos', 'en_progreso', '2024-01-01', '2024-01-31', 'Desarrollo Personal');
 
 -- --------------------------------------------------------
 
@@ -512,17 +590,16 @@ CREATE TABLE `registro_progreso` (
 -- Volcado de datos para la tabla `registro_progreso`
 --
 
-INSERT INTO `registro_progreso` (`id_registro`, `habito_id`, `fecha_registro`, `estado_progreso`, `notas_usuario`, `recompensas_obtenidas`) VALUES
-(1, 1, '2024-01-01', 'completado', 'Buen inicio', 'Medalla de Bronce'),
-(2, 2, '2024-01-01', 'completado', 'Interesante lectura', 'Medalla de Bronce'),
-(3, 3, '2024-01-01', 'completado', 'Relajante', 'Medalla de Bronce'),
-(4, 4, '2024-01-01', 'completado', 'Ahorro realizado', 'Medalla de Bronce'),
-(5, 5, '2024-01-01', 'completado', 'Aprendí algo nuevo', 'Medalla de Bronce'),
-(6, 6, '2024-01-01', 'completado', 'Buena carrera', 'Medalla de Bronce'),
-(7, 7, '2024-01-01', 'completado', 'Dieta seguida', 'Medalla de Bronce'),
-(8, 8, '2024-01-01', 'completado', 'Mejoré mi inglés', 'Medalla de Bronce'),
-(9, 9, '2024-01-01', 'completado', 'Reflexioné sobre el día', 'Medalla de Bronce'),
-(10, 10, '2024-01-01', 'completado', 'Lectura motivadora', 'Medalla de Bronce');
+INSERT INTO `registro_progreso` (`id_registro`, `habito_id`, `fecha_registro`, `estado_progreso`, `notas_usuario`, `recompensas_obtenidas`) VALUES(1, 1, '2024-01-01', 'completado', 'Buen inicio', 'Medalla de Bronce');
+INSERT INTO `registro_progreso` (`id_registro`, `habito_id`, `fecha_registro`, `estado_progreso`, `notas_usuario`, `recompensas_obtenidas`) VALUES(2, 2, '2024-01-01', 'completado', 'Interesante lectura', 'Medalla de Bronce');
+INSERT INTO `registro_progreso` (`id_registro`, `habito_id`, `fecha_registro`, `estado_progreso`, `notas_usuario`, `recompensas_obtenidas`) VALUES(3, 3, '2024-01-01', 'completado', 'Relajante', 'Medalla de Bronce');
+INSERT INTO `registro_progreso` (`id_registro`, `habito_id`, `fecha_registro`, `estado_progreso`, `notas_usuario`, `recompensas_obtenidas`) VALUES(4, 4, '2024-01-01', 'completado', 'Ahorro realizado', 'Medalla de Bronce');
+INSERT INTO `registro_progreso` (`id_registro`, `habito_id`, `fecha_registro`, `estado_progreso`, `notas_usuario`, `recompensas_obtenidas`) VALUES(5, 5, '2024-01-01', 'completado', 'Aprendí algo nuevo', 'Medalla de Bronce');
+INSERT INTO `registro_progreso` (`id_registro`, `habito_id`, `fecha_registro`, `estado_progreso`, `notas_usuario`, `recompensas_obtenidas`) VALUES(6, 6, '2024-01-01', 'completado', 'Buena carrera', 'Medalla de Bronce');
+INSERT INTO `registro_progreso` (`id_registro`, `habito_id`, `fecha_registro`, `estado_progreso`, `notas_usuario`, `recompensas_obtenidas`) VALUES(7, 7, '2024-01-01', 'completado', 'Dieta seguida', 'Medalla de Bronce');
+INSERT INTO `registro_progreso` (`id_registro`, `habito_id`, `fecha_registro`, `estado_progreso`, `notas_usuario`, `recompensas_obtenidas`) VALUES(8, 8, '2024-01-01', 'completado', 'Mejoré mi inglés', 'Medalla de Bronce');
+INSERT INTO `registro_progreso` (`id_registro`, `habito_id`, `fecha_registro`, `estado_progreso`, `notas_usuario`, `recompensas_obtenidas`) VALUES(9, 9, '2024-01-01', 'completado', 'Reflexioné sobre el día', 'Medalla de Bronce');
+INSERT INTO `registro_progreso` (`id_registro`, `habito_id`, `fecha_registro`, `estado_progreso`, `notas_usuario`, `recompensas_obtenidas`) VALUES(10, 10, '2024-01-01', 'completado', 'Lectura motivadora', 'Medalla de Bronce');
 
 -- --------------------------------------------------------
 
@@ -557,17 +634,16 @@ CREATE TABLE `sesiones` (
 -- Volcado de datos para la tabla `sesiones`
 --
 
-INSERT INTO `sesiones` (`id_sesion`, `id_usuario`, `token`, `fecha_inicio`, `fecha_fin`) VALUES
-(1, 1, 'token_example_1', '2024-12-04 04:48:14', '2024-12-02 05:59:59'),
-(2, 2, 'token_example_2', '2024-12-04 04:48:14', '2024-12-02 05:59:59'),
-(3, 3, 'token_example_3', '2024-12-04 04:48:14', '2024-12-02 05:59:59'),
-(4, 4, 'token_example_4', '2024-12-04 04:48:14', '2024-12-02 05:59:59'),
-(5, 5, 'token_example_5', '2024-12-04 04:48:14', '2024-12-02 05:59:59'),
-(6, 6, 'token_example_6', '2024-12-04 04:48:14', '2024-12-02 05:59:59'),
-(7, 7, 'token_example_7', '2024-12-04 04:48:14', '2024-12-02 05:59:59'),
-(8, 8, 'token_example_8', '2024-12-04 04:48:14', '2024-12-02 05:59:59'),
-(9, 9, 'token_example_9', '2024-12-04 04:48:14', '2024-12-02 05:59:59'),
-(10, 10, 'token_example_10', '2024-12-04 04:48:14', '2024-12-02 05:59:59');
+INSERT INTO `sesiones` (`id_sesion`, `id_usuario`, `token`, `fecha_inicio`, `fecha_fin`) VALUES(1, 1, 'token_example_1', '2024-12-04 04:48:14', '2024-12-02 05:59:59');
+INSERT INTO `sesiones` (`id_sesion`, `id_usuario`, `token`, `fecha_inicio`, `fecha_fin`) VALUES(2, 2, 'token_example_2', '2024-12-04 04:48:14', '2024-12-02 05:59:59');
+INSERT INTO `sesiones` (`id_sesion`, `id_usuario`, `token`, `fecha_inicio`, `fecha_fin`) VALUES(3, 3, 'token_example_3', '2024-12-04 04:48:14', '2024-12-02 05:59:59');
+INSERT INTO `sesiones` (`id_sesion`, `id_usuario`, `token`, `fecha_inicio`, `fecha_fin`) VALUES(4, 4, 'token_example_4', '2024-12-04 04:48:14', '2024-12-02 05:59:59');
+INSERT INTO `sesiones` (`id_sesion`, `id_usuario`, `token`, `fecha_inicio`, `fecha_fin`) VALUES(5, 5, 'token_example_5', '2024-12-04 04:48:14', '2024-12-02 05:59:59');
+INSERT INTO `sesiones` (`id_sesion`, `id_usuario`, `token`, `fecha_inicio`, `fecha_fin`) VALUES(6, 6, 'token_example_6', '2024-12-04 04:48:14', '2024-12-02 05:59:59');
+INSERT INTO `sesiones` (`id_sesion`, `id_usuario`, `token`, `fecha_inicio`, `fecha_fin`) VALUES(7, 7, 'token_example_7', '2024-12-04 04:48:14', '2024-12-02 05:59:59');
+INSERT INTO `sesiones` (`id_sesion`, `id_usuario`, `token`, `fecha_inicio`, `fecha_fin`) VALUES(8, 8, 'token_example_8', '2024-12-04 04:48:14', '2024-12-02 05:59:59');
+INSERT INTO `sesiones` (`id_sesion`, `id_usuario`, `token`, `fecha_inicio`, `fecha_fin`) VALUES(9, 9, 'token_example_9', '2024-12-04 04:48:14', '2024-12-02 05:59:59');
+INSERT INTO `sesiones` (`id_sesion`, `id_usuario`, `token`, `fecha_inicio`, `fecha_fin`) VALUES(10, 10, 'token_example_10', '2024-12-04 04:48:14', '2024-12-02 05:59:59');
 
 -- --------------------------------------------------------
 
@@ -600,19 +676,27 @@ CREATE TABLE `tipos_usuario` (
 -- Volcado de datos para la tabla `tipos_usuario`
 --
 
-INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES
-(1, 1, 'admin'),
-(2, 2, 'usuario'),
-(3, 3, 'usuario'),
-(4, 4, 'admin'),
-(5, 5, 'usuario'),
-(6, 6, 'usuario'),
-(7, 7, 'admin'),
-(8, 8, 'usuario'),
-(9, 9, 'usuario'),
-(10, 10, 'admin'),
-(12, 20, 'admin'),
-(13, 21, 'usuario');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(1, 1, 'admin');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(2, 2, 'usuario');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(3, 3, 'usuario');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(4, 4, 'admin');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(5, 5, 'usuario');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(6, 6, 'usuario');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(7, 7, 'admin');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(8, 8, 'usuario');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(9, 9, 'usuario');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(10, 10, 'admin');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(12, 20, 'admin');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(13, 21, 'usuario');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(14, 22, 'usuario');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(15, 23, 'admin');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(16, 24, 'usuario');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(17, 25, 'usuario');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(18, 26, 'usuario');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(19, 28, 'usuario');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(20, 29, 'usuario');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(21, 31, 'usuario');
+INSERT INTO `tipos_usuario` (`id_tipo_usuario`, `id_usuario`, `tipo`) VALUES(22, 32, 'usuario');
 
 -- --------------------------------------------------------
 
@@ -639,26 +723,34 @@ CREATE TABLE `usuario` (
 -- Volcado de datos para la tabla `usuario`
 --
 
-INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES
-(1, 'Juan', 'Pérez', 'juan.perez@example.com', 'password123', '1990-01-01', 'Masculino', 'México', '2024-11-23 21:28:38', 'gratuita', '0000-00-00 00:00:00', 'correo'),
-(2, 'María', 'García', 'maria.garcia@example.com', 'password123', '1985-05-15', 'Femenino', 'España', '2024-11-23 21:28:38', 'premium', '0000-00-00 00:00:00', 'push'),
-(3, 'Carlos', 'López', 'carlos.lopez@example.com', 'password123', '1992-07-20', 'Masculino', 'Argentina', '2024-11-23 21:28:38', 'gratuita', '0000-00-00 00:00:00', 'correo'),
-(4, 'Ana', 'Martínez', 'ana.martinez@example.com', 'password123', '1988-03-10', 'Femenino', 'Chile', '2024-11-23 21:28:38', 'premium', '0000-00-00 00:00:00', 'push'),
-(5, 'Luis', 'Rodríguez', 'luis.rodriguez@example.com', 'password123', '1995-11-25', 'Masculino', 'Colombia', '2024-11-23 21:28:38', 'gratuita', '0000-00-00 00:00:00', 'correo'),
-(6, 'Laura', 'Hernández', 'laura.hernandez@example.com', 'password123', '1991-09-05', 'Femenino', 'Perú', '2024-11-23 21:28:38', 'premium', '0000-00-00 00:00:00', 'push'),
-(7, 'Jorge', 'González', 'jorge.gonzalez@example.com', 'password123', '1987-12-30', 'Masculino', 'Uruguay', '2024-11-23 21:28:38', 'gratuita', '0000-00-00 00:00:00', 'correo'),
-(8, 'Sofía', 'Ramírez', 'sofia.ramirez@example.com', 'password123', '1993-04-18', 'Femenino', 'Paraguay', '2024-11-23 21:28:38', 'premium', '0000-00-00 00:00:00', 'push'),
-(9, 'Miguel', 'Fernández', 'miguel.fernandez@example.com', 'password123', '1990-06-22', 'Masculino', 'Bolivia', '2024-11-23 21:28:38', 'gratuita', '0000-00-00 00:00:00', 'correo'),
-(10, 'Elena', 'Torres', 'elena.torres@example.com', 'password123', '1989-08-14', 'Femenino', 'Ecuador', '2024-11-23 21:28:38', 'premium', '0000-00-00 00:00:00', 'push'),
-(11, 'Prueba', 'HTML', 'qs@gmail.com', 'Prueba1@', '2024-12-01', 'masculino', 'Honduras', '2024-12-04 20:23:52', 'gratuita', NULL, 'Push'),
-(12, 'Pruebas', 'HTML', 'qs2@gmail.com', 'Prueba2@', '2024-12-03', 'femenino', 'Honduras', '2024-12-04 20:43:23', 'gratuita', NULL, 'Push'),
-(14, 'Prue', 'HT', 'as2@gmail.com', 'Prueba1@', '2024-12-01', 'masculino', 'Honduras', '2024-12-04 20:45:15', 'gratuita', NULL, 'Push'),
-(15, 'Pa', 'Ca', 'c@gmail.com', 'cajon1@', '2024-12-01', 'masculino', 'Austria', '2024-12-04 21:06:30', 'premium', NULL, 'No'),
-(16, 'ps', 'ba', 'sa@gmail.com', 'sdfaa@1', '2024-12-01', 'femenino', 'México', '2024-12-04 21:09:56', 'gratuita', NULL, 'No'),
-(17, 'psa', 'bas', 'swa@gmail.com', '$2y$10$odRykWTh6UD1L/8ia73huOmVk7EKyOMmWlN/OtwNraNKKrnu6d37O', '2024-11-11', 'masculino', 'México', '2024-12-04 21:29:18', 'gratuita', NULL, 'No'),
-(18, 'admin', 'istrador', 'admin@gmail.com', '$2y$10$4jRt3k3Y6eVxQa37mqfo6enMIR93O5hoV6bfsQC40Eum2fDnZCprq', '2024-12-04', 'otro', 'Honduras', '2024-12-04 22:12:01', 'gratuita', NULL, 'No'),
-(20, 'admina', 'istrador', 'admin2@gmail.com', '$2y$10$m9h3JP/bpNI4cZSBnC1RR.d9/dV8S.2phzexCvJgsHAPeRtmgPxuO', '2024-12-01', 'otro', 'Honduras', '2024-12-04 22:16:17', 'gratuita', NULL, 'No'),
-(21, 'usuario', 'Normal', 'un@gmail.com', '$2y$10$0mNG2zbHLh0xwdp8ge.G9O7t5tsDenFo6RS1.H/n5m4ZdpWgwRP/q', '2024-12-04', 'otro', 'Honduras', '2024-12-04 22:26:29', 'gratuita', NULL, 'No');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(1, 'Juan', 'Pérez', 'juan.perez@example.com', 'password123', '1990-01-01', 'Masculino', 'México', '2024-11-23 21:28:38', 'gratuita', '0000-00-00 00:00:00', 'correo');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(2, 'María', 'García', 'maria.garcia@example.com', 'password123', '1985-05-15', 'Femenino', 'España', '2024-11-23 21:28:38', 'premium', '0000-00-00 00:00:00', 'push');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(3, 'Carlos', 'López', 'carlos.lopez@example.com', 'password123', '1992-07-20', 'Masculino', 'Argentina', '2024-11-23 21:28:38', 'gratuita', '0000-00-00 00:00:00', 'correo');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(4, 'Ana', 'Martínez', 'ana.martinez@example.com', 'password123', '1988-03-10', 'Femenino', 'Chile', '2024-11-23 21:28:38', 'premium', '0000-00-00 00:00:00', 'push');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(5, 'Luis', 'Rodríguez', 'luis.rodriguez@example.com', 'password123', '1995-11-25', 'Masculino', 'Colombia', '2024-11-23 21:28:38', 'gratuita', '0000-00-00 00:00:00', 'correo');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(6, 'Laura', 'Hernández', 'laura.hernandez@example.com', 'password123', '1991-09-05', 'Femenino', 'Perú', '2024-11-23 21:28:38', 'premium', '0000-00-00 00:00:00', 'push');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(7, 'Jorge', 'González', 'jorge.gonzalez@example.com', 'password123', '1987-12-30', 'Masculino', 'Uruguay', '2024-11-23 21:28:38', 'gratuita', '0000-00-00 00:00:00', 'correo');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(8, 'Sofía', 'Ramírez', 'sofia.ramirez@example.com', 'password123', '1993-04-18', 'Femenino', 'Paraguay', '2024-11-23 21:28:38', 'premium', '0000-00-00 00:00:00', 'push');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(9, 'Miguel', 'Fernández', 'miguel.fernandez@example.com', 'password123', '1990-06-22', 'Masculino', 'Bolivia', '2024-11-23 21:28:38', 'gratuita', '0000-00-00 00:00:00', 'correo');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(10, 'Elena', 'Torres', 'elena.torres@example.com', 'password123', '1989-08-14', 'Femenino', 'Ecuador', '2024-11-23 21:28:38', 'premium', '0000-00-00 00:00:00', 'push');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(11, 'Prueba', 'HTML', 'qs@gmail.com', 'Prueba1@', '2024-12-01', 'masculino', 'Honduras', '2024-12-04 20:23:52', 'gratuita', NULL, 'Push');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(12, 'Pruebas', 'HTML', 'qs2@gmail.com', 'Prueba2@', '2024-12-03', 'femenino', 'Honduras', '2024-12-04 20:43:23', 'gratuita', NULL, 'Push');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(14, 'Prue', 'HT', 'as2@gmail.com', 'Prueba1@', '2024-12-01', 'masculino', 'Honduras', '2024-12-04 20:45:15', 'gratuita', NULL, 'Push');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(15, 'Pa', 'Ca', 'c@gmail.com', 'cajon1@', '2024-12-01', 'masculino', 'Austria', '2024-12-04 21:06:30', 'premium', NULL, 'No');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(16, 'ps', 'ba', 'sa@gmail.com', 'sdfaa@1', '2024-12-01', 'femenino', 'México', '2024-12-04 21:09:56', 'gratuita', NULL, 'No');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(17, 'psa', 'bas', 'swa@gmail.com', '$2y$10$odRykWTh6UD1L/8ia73huOmVk7EKyOMmWlN/OtwNraNKKrnu6d37O', '2024-11-11', 'masculino', 'México', '2024-12-04 21:29:18', 'gratuita', NULL, 'No');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(18, 'admin', 'istrador', 'admin@gmail.com', '$2y$10$4jRt3k3Y6eVxQa37mqfo6enMIR93O5hoV6bfsQC40Eum2fDnZCprq', '2024-12-04', 'otro', 'Honduras', '2024-12-04 22:12:01', 'gratuita', NULL, 'No');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(20, 'admina', 'istrador', 'admin2@gmail.com', '$2y$10$m9h3JP/bpNI4cZSBnC1RR.d9/dV8S.2phzexCvJgsHAPeRtmgPxuO', '2024-12-01', 'otro', 'Honduras', '2024-12-04 22:16:17', 'gratuita', NULL, 'No');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(21, 'usuario', 'Normal', 'un@gmail.com', '$2y$10$0mNG2zbHLh0xwdp8ge.G9O7t5tsDenFo6RS1.H/n5m4ZdpWgwRP/q', '2024-12-04', 'otro', 'Honduras', '2024-12-04 22:26:29', 'gratuita', NULL, 'No');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(22, 'Pru', 'ba', 'us@gmail.com', '$2y$10$JaCIfUEpzIPVC3.C7SegeeNRoLNpG73LqfI5YciPx9uf12cexNA.y', '2024-12-01', 'masculino', 'Honduras', '2024-12-06 00:13:51', 'gratuita', NULL, 'No');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(23, 'Pru', 'ba', 'use@gmail.com', '$2y$10$rTV8IBURoDWHLoThuNaJ7uNkigLXBtSw09mUqzMaAlFSBqmaolr2G', '2024-12-01', 'otro', 'Honduras', '2024-12-06 00:18:54', 'gratuita', NULL, 'No');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(24, 'Paco', 'Paez', 'pp@gmail.com', '$2y$10$UGqHR8zePOi1wKr7mnmxo.XikK.H5pitrscIPHdQBtZIUgUd2SGaS', '2024-12-01', 'masculino', 'México', '2024-12-06 15:25:46', 'gratuita', NULL, 'No');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(25, 'Paco', 'Paez', 'p2p@gmail.com', '$2y$10$hbTxJ2uGmSJfsRb1Tl.wsuBHepOgwQ54tW/us8eN8vCAIhSZYUYH2', '2024-12-01', 'masculino', 'México', '2024-12-06 15:28:45', 'gratuita', NULL, 'No');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(26, 'Paco', 'Paez', 'p3p@gmail.com', '$2y$10$fZhL6qs.Ck4IOTItEFOwmeejfy3hBEuguCuTW58xgqaB1tdpOP8PS', '2024-12-03', 'masculino', 'México', '2024-12-06 15:31:46', 'gratuita', NULL, 'No');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(28, 'Paco', 'Paez', 'p4p@gmail.com', '$2y$10$RXfq3o1uZwQbcjxT.WkBee5WZJDuz0d3PqGviSrJN6xtlyH5jY8lS', '2024-12-03', 'masculino', 'México', '2024-12-06 15:32:36', 'gratuita', NULL, 'No');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(29, 'Paco', 'Paez', 'p5p@gmail.com', '$2y$10$PmOCRHediaCAW8NeNtxOgudYgjVNjfi.PIxV3d1.CklVxfMBEa1EK', '2024-12-01', 'masculino', 'México', '2024-12-06 15:38:36', 'gratuita', NULL, 'No');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(31, 'Prueba', 'JWT', 'JWT@gmail.com', '$2y$10$xs7VfHTMaO1EX2SmPn7dOu7YE4tVAQZzQ.Nor/lFD4yOeIGCxcTR2', '2024-12-01', 'masculino', 'Honduras', '2024-12-09 03:49:06', 'gratuita', NULL, 'No');
+INSERT INTO `usuario` (`id_usuario`, `nombre`, `apellidos`, `correo_electronico`, `contrasena`, `fecha_nacimiento`, `genero`, `pais_region`, `fecha_registro`, `nivel_suscripcion`, `ultima_fecha_acceso`, `preferencias_notificacion`) VALUES(32, 'Pruebas', 'jwts', 'pjwt@gmail.com', '$2y$10$v23PJDtjiS6FAOOEu1mbJ.fKF6b/78DTlClUM0mvI1.iExR7hKj1W', '2024-12-01', 'otro', 'Honduras', '2024-12-09 03:52:38', 'gratuita', NULL, 'No');
 
 -- --------------------------------------------------------
 
@@ -676,17 +768,21 @@ CREATE TABLE `usuario_habito` (
 -- Volcado de datos para la tabla `usuario_habito`
 --
 
-INSERT INTO `usuario_habito` (`id_usuario_habito`, `usuario_id`, `habito_id`) VALUES
-(1, 1, 1),
-(2, 2, 2),
-(3, 3, 3),
-(4, 4, 4),
-(5, 5, 5),
-(6, 6, 6),
-(7, 7, 7),
-(8, 8, 8),
-(9, 9, 9),
-(10, 10, 10);
+INSERT INTO `usuario_habito` (`id_usuario_habito`, `usuario_id`, `habito_id`) VALUES(1, 1, 1);
+INSERT INTO `usuario_habito` (`id_usuario_habito`, `usuario_id`, `habito_id`) VALUES(2, 2, 2);
+INSERT INTO `usuario_habito` (`id_usuario_habito`, `usuario_id`, `habito_id`) VALUES(3, 3, 3);
+INSERT INTO `usuario_habito` (`id_usuario_habito`, `usuario_id`, `habito_id`) VALUES(4, 4, 4);
+INSERT INTO `usuario_habito` (`id_usuario_habito`, `usuario_id`, `habito_id`) VALUES(5, 5, 5);
+INSERT INTO `usuario_habito` (`id_usuario_habito`, `usuario_id`, `habito_id`) VALUES(6, 6, 6);
+INSERT INTO `usuario_habito` (`id_usuario_habito`, `usuario_id`, `habito_id`) VALUES(7, 7, 7);
+INSERT INTO `usuario_habito` (`id_usuario_habito`, `usuario_id`, `habito_id`) VALUES(8, 8, 8);
+INSERT INTO `usuario_habito` (`id_usuario_habito`, `usuario_id`, `habito_id`) VALUES(9, 21, 9);
+INSERT INTO `usuario_habito` (`id_usuario_habito`, `usuario_id`, `habito_id`) VALUES(10, 21, 10);
+INSERT INTO `usuario_habito` (`id_usuario_habito`, `usuario_id`, `habito_id`) VALUES(13, 29, 13);
+INSERT INTO `usuario_habito` (`id_usuario_habito`, `usuario_id`, `habito_id`) VALUES(14, 29, 14);
+INSERT INTO `usuario_habito` (`id_usuario_habito`, `usuario_id`, `habito_id`) VALUES(15, 29, 15);
+INSERT INTO `usuario_habito` (`id_usuario_habito`, `usuario_id`, `habito_id`) VALUES(16, 29, 16);
+INSERT INTO `usuario_habito` (`id_usuario_habito`, `usuario_id`, `habito_id`) VALUES(17, 29, 17);
 
 --
 -- Índices para tablas volcadas
@@ -704,8 +800,8 @@ ALTER TABLE `comentarios_usuario`
 --
 ALTER TABLE `comentario_habito`
   ADD PRIMARY KEY (`id_comentario_habito`),
-  ADD KEY `habito_id` (`habito_id`),
-  ADD KEY `usuario_id` (`usuario_id`);
+  ADD KEY `usuario_id` (`usuario_id`),
+  ADD KEY `fk_grupo_id` (`grupo_id`);
 
 --
 -- Indices de la tabla `competencia`
@@ -740,8 +836,7 @@ ALTER TABLE `estadisticas_usuario`
 -- Indices de la tabla `grupo_apoyo`
 --
 ALTER TABLE `grupo_apoyo`
-  ADD PRIMARY KEY (`id_grupo`),
-  ADD KEY `habito_compartido` (`habito_compartido`);
+  ADD PRIMARY KEY (`id_grupo`);
 
 --
 -- Indices de la tabla `habito`
@@ -849,7 +944,7 @@ ALTER TABLE `comentarios_usuario`
 -- AUTO_INCREMENT de la tabla `comentario_habito`
 --
 ALTER TABLE `comentario_habito`
-  MODIFY `id_comentario_habito` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_comentario_habito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `competencia`
@@ -879,13 +974,13 @@ ALTER TABLE `estadisticas_usuario`
 -- AUTO_INCREMENT de la tabla `grupo_apoyo`
 --
 ALTER TABLE `grupo_apoyo`
-  MODIFY `id_grupo` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_grupo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `habito`
 --
 ALTER TABLE `habito`
-  MODIFY `id_habito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_habito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de la tabla `integracion`
@@ -945,19 +1040,19 @@ ALTER TABLE `suscripcion`
 -- AUTO_INCREMENT de la tabla `tipos_usuario`
 --
 ALTER TABLE `tipos_usuario`
-  MODIFY `id_tipo_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_tipo_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario_habito`
 --
 ALTER TABLE `usuario_habito`
-  MODIFY `id_usuario_habito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_usuario_habito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- Restricciones para tablas volcadas
@@ -973,8 +1068,9 @@ ALTER TABLE `comentarios_usuario`
 -- Filtros para la tabla `comentario_habito`
 --
 ALTER TABLE `comentario_habito`
-  ADD CONSTRAINT `comentario_habito_ibfk_1` FOREIGN KEY (`habito_id`) REFERENCES `habito` (`id_habito`),
-  ADD CONSTRAINT `comentario_habito_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id_usuario`);
+  ADD CONSTRAINT `comentario_habito_ibfk_1` FOREIGN KEY (`grupo_id`) REFERENCES `habito` (`id_habito`),
+  ADD CONSTRAINT `comentario_habito_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id_usuario`),
+  ADD CONSTRAINT `fk_grupo_id` FOREIGN KEY (`grupo_id`) REFERENCES `grupo_apoyo` (`id_grupo`);
 
 --
 -- Filtros para la tabla `competencia`
@@ -1000,12 +1096,6 @@ ALTER TABLE `desafio`
 --
 ALTER TABLE `estadisticas_usuario`
   ADD CONSTRAINT `estadisticas_usuario_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id_usuario`);
-
---
--- Filtros para la tabla `grupo_apoyo`
---
-ALTER TABLE `grupo_apoyo`
-  ADD CONSTRAINT `grupo_apoyo_ibfk_1` FOREIGN KEY (`habito_compartido`) REFERENCES `habito` (`id_habito`);
 
 --
 -- Filtros para la tabla `integracion`

@@ -81,7 +81,15 @@ $(document).ready(function() {
           console.log('Respuesta exitosa:', response);
           if (response.status === "success") {
             alert(response.message || "Usuario registrado exitosamente");
-            // Usar una ruta absoluta desde la raíz
+            
+            // Almacenar el token JWT
+            localStorage.setItem('jwt_token', response.token);
+            
+            // Guardar datos del usuario
+            localStorage.setItem('usuario_id', response.usuario_id);
+            localStorage.setItem('nombre_completo', response.nombre_completo);
+            
+            // Redireccionar al usuario
             window.location.href = 'http://localhost/Habitos/src/Routes/views/index.html';
           } else {
             alert("Error: " + (response.error || "Error desconocido"));

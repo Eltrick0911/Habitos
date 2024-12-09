@@ -36,6 +36,21 @@ $(document).ready(function() {
       success: function(response) {
         $("#contenidoDinamico").html(response);
         $(".info").hide();
+
+        if (!document.getElementById('registerStyles')) {
+          var link = document.createElement('link');
+          link.id = 'registerStyles';
+          link.rel = 'stylesheet';
+          link.href = './ccs/styles.css';
+          document.head.appendChild(link);
+        }
+
+        if (!document.getElementById('scriptRegistro')) {
+          var script = document.createElement('script');
+          script.id = 'scriptRegistro';
+          script.src = './js/ScriptRegistro.js';
+          document.body.appendChild(script);
+        }
       },
       error: function(error) {
         console.error('Error:', error);
