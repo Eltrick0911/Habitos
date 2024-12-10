@@ -61,7 +61,19 @@ function agregarComentario(grupoId, comentario) {
             fecha_comentario: fechaComentario
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        return response.text().then(text => {
+            console.log('Respuesta del servidor:', text);
+            if (!response.ok) {
+                throw new Error(text);
+            }
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                throw new Error('La respuesta no es un JSON válido');
+            }
+        });
+    })
     .then(data => {
         if (data.status === 'success') {
             alert('Comentario agregado exitosamente!');

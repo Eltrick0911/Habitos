@@ -52,9 +52,8 @@ $(document).ready(function() {
     var apellidoValido = validarNombreApellido(document.getElementById("apellido").value, "apellido");
     var correoValido = validarCorreo(document.getElementById("email").value);
     var contrasenaValida = validarContrasena(document.getElementById("password").value);
-    // ... (validar los demás campos) ...
 
-    if (nombreValido && apellidoValido && correoValido && contrasenaValida /* && ... (otras validaciones) ... */ ) {
+    if (nombreValido && apellidoValido && correoValido && contrasenaValida ) {
       // Obtener los valores del formulario
       var datos = {
         nombre: $("#nombre").val(),

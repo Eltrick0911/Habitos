@@ -31,10 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception("Error decodificando JSON: " . json_last_error_msg());
         }
 
-        // Agregar logging para debug
         error_log("Datos recibidos: " . print_r($data, true));
 
-        // Validar que todos los campos necesarios estén presentes
         $campos_requeridos = ['nombre', 'apellidos', 'correo_electronico', 'contrasena', 
                             'fecha_nacimiento', 'genero', 'pais_region', 
                             'nivel_suscripcion', 'preferencias_notificacion'];

@@ -1,30 +1,33 @@
-<?php
-use App\config\errorlogs;
-use App\config\responseHTTP;
-require dirname(__DIR__).'/vendor/autoload.php';
-errorlogs::activa_error_logs();
-if(isset($_GET['route'])){
-    $url = explode('/',$_GET['route']); 
-    $lista = ['auth', 'user']; // lista de rutas permitidas
-	$file = dirname(__DIR__).'/src/routes/'.$url[0].'.php';
-    if(!in_array($url[0], $lista)){
-        //LA ruta no existe
-        echo json_encode(responseHTTP::status400());
-        error_log('Esto es una prueba de un error');
-        exit; //finalizamos la ejecución
-    } 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GOOD HABITS</title>
+  <link rel="stylesheet" href="./ccs/Inicio.css" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+</head>
+<body>
+  <header>
+    <img src="../Src/Img/Logo2.png" alt="Logo" />
+    <nav>
+      <button id="btnLogin">Iniciar Sesión</button>
+      <button id="btnRegister">Registrarse</button>
+    </nav>
+  </header>
+  <main>
+    <h1>Bienvenido a GOOD HABITS</h1>
+    <div class="info">
+      <p>
+        GOOD HABITS es una aplicación que te ayuda a construir hábitos
+        saludables y alcanzar tus objetivos. Organiza tu vida, aumenta tu
+        productividad y mejora tu bienestar con nuestro sencillo sistema de
+        seguimiento de hábitos.
+      </p>
+      <p>¡Comienza a construir una mejor versión de ti mismo hoy!</p>
+    </div>
+    <div id="contenidoDinamico"></div> 
+  </main>
 
-    //validamos que el archivo exista y que es legible
-    if(!file_exists($file) || !is_readable($file)){
-        //El archivo no existe o no es legible
-        echo json_encode(responseHTTP::status400());
-    }else{
-        //echo $file;
-        require $file;
-        exit;
-    }
-
-}else{
-    //la variable GET route no esta definida
-    echo json_encode(responseHTTP::status404());
-}
+  <script src="./js/home.js"></script> </body>
+</html>
