@@ -1,4 +1,5 @@
 $(document).ready(function() {
+  //Js Login
   // Función para mostrar/ocultar mensajes de error
   function mostrarError(campoId, mensaje) {
     document.getElementById(campoId + "Error").textContent = mensaje;
