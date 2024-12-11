@@ -123,6 +123,9 @@ class usuario{
             $db = new clase_conexion();
             $con = $db->abrirConexion();
 
+            // Log para debug
+            error_log("Intento de login para correo: " . $correo_electronico);
+
             // Primero obtener el usuario por correo electrónico
             $stmt = $con->prepare("SELECT u.*, t.tipo as tipo_usuario 
                                   FROM usuario u 
@@ -131,7 +134,18 @@ class usuario{
             $stmt->execute([$correo_electronico]);
             $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($usuario && password_verify($contrasena, $usuario['contrasena'])) {
+            if (!$usuario) {
+                error_log("Usuario no encontrado para correo: " . $correo_electronico);
+                return [
+                    'resultado' => 0,
+                    'tipo_usuario' => null,
+                    'id_usuario' => null,
+                    'mensaje' => 'Usuario no encontrado'
+                ];
+            }
+
+            if (password_verify($contrasena, $usuario['contrasena'])) {
+                error_log("Login exitoso para usuario: " . $correo_electronico);
                 // Login exitoso
                 return [
                     'resultado' => 1,
@@ -139,14 +153,16 @@ class usuario{
                     'id_usuario' => $usuario['id_usuario']
                 ];
             } else {
-                // Login fallido
+                error_log("Contraseña incorrecta para usuario: " . $correo_electronico);
                 return [
                     'resultado' => 0,
                     'tipo_usuario' => null,
-                    'id_usuario' => null
+                    'id_usuario' => null,
+                    'mensaje' => 'Contraseña incorrecta'
                 ];
             }
         } catch (PDOException $e) {
+            error_log("Error en BD durante login: " . $e->getMessage());
             throw new Exception("Error al validar login: " . $e->getMessage());
         }
     }

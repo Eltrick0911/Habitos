@@ -49,7 +49,7 @@ $(document).ready(function() {
 
       // Realizar la petición AJAX
       $.ajax({
-        url: 'http://localhost/Habitos/api-rest/api/procesar_login.php',
+        url: window.location.protocol + '//' + window.location.hostname + '/Habitos/api-rest/api/procesar_login.php',
         type: 'POST',
         data: JSON.stringify(datos),
         contentType: 'application/json',
@@ -79,15 +79,19 @@ $(document).ready(function() {
           }
         },
         error: function(xhr, status, error) {
-          console.error('Error:', error);
-          console.error('Estado:', status);
-          console.error('Respuesta:', xhr.responseText);
-          let errorMessage = "Error al iniciar sesión";
+          console.error('Error detallado:', {
+            error: error,
+            status: status,
+            responseText: xhr.responseText,
+            statusCode: xhr.status
+          });
+          
+          let errorMessage = "Error al iniciar sesión. ";
           try {
             const response = JSON.parse(xhr.responseText);
-            errorMessage = response.error || error;
+            errorMessage += response.error || error;
           } catch(e) {
-            errorMessage = error;
+            errorMessage += "No se pudo conectar con el servidor";
           }
           alert(errorMessage);
         }

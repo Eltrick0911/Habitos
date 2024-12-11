@@ -6,8 +6,14 @@ ini_set('display_errors', 1);
 // Obtener el origen de la solicitud
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
-// Permitir solo orígenes de localhost con cualquier puerto
-if (preg_match('/^http:\/\/localhost(:[0-9]+)?$/', $origin)) {
+// Permitir orígenes específicos
+$allowed_origins = [
+    'http://localhost:5500',
+    'http://127.0.0.1:5500',
+    'http://localhost'
+];
+
+if (in_array($origin, $allowed_origins)) {
     header("Access-Control-Allow-Origin: " . $origin);
 }
 
