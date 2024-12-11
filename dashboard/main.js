@@ -1,4 +1,24 @@
 $(document).ready(function(){
+    const baseUrl = 'http://localhost/Habitos/bd/';
+
+    $.ajax({
+        url: baseUrl + "crud_contadores.php",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            if (data.success) {
+                $("#totalUsuarios").text(data.data.usuarios);
+                $("#totalHabitos").text(data.data.habitos);
+                $("#totalComentarios").text(data.data.comentarios);
+            } else {
+                console.error('Error en la respuesta:', data.message);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error('Error en la petición de contadores:', textStatus, errorThrown);
+        }
+    });
+
     tablaPersonas = $("#tablaPersonas").DataTable({
        "columnDefs":[{
         "targets": -1,
@@ -63,7 +83,7 @@ $(document).on("click", ".btnBorrar", function(){
     var respuesta = confirm("¿Está seguro de eliminar el registro: "+id+"?");
     if(respuesta){
         $.ajax({
-            url: "bd/crud.php",
+            url: baseUrl + "crud.php",
             type: "POST",
             dataType: "json",
             data: {opcion:opcion, id:id},
@@ -80,7 +100,7 @@ $("#formPersonas").submit(function(e){
     pais = $.trim($("#pais").val());
     edad = $.trim($("#edad").val());    
     $.ajax({
-        url: "bd/crud.php",
+        url: baseUrl + "crud.php",
         type: "POST",
         dataType: "json",
         data: {nombre:nombre, pais:pais, edad:edad, id:id, opcion:opcion},

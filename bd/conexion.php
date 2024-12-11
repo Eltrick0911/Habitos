@@ -1,16 +1,16 @@
 <?php
 class Conexion extends PDO
 {
-    private $hostBd = 'localhost';
-    private $nombreBd = 'habitos';
-    private $usuarioBd = 'root';
-    private $passwordBd = '';
+    protected $database_host = "localhost";
+    protected $database_name = "seguimientohabitos";
+    protected $database_user = "root";
+    protected $database_pass = "252411";
     
     public function __construct()
     {
         try {
-            parent::__construct('mysql:host=' . $this->hostBd . ';dbname=' . $this->nombreBd . ';charset=utf8', 
-                $this->usuarioBd, $this->passwordBd, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+            parent::__construct('mysql:host=' . $this->database_host . ';dbname=' . $this->database_name . ';charset=utf8', 
+                $this->database_user, $this->database_pass, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
             
         } catch(PDOException $e) {
             echo 'Error: ' . $e->getMessage();

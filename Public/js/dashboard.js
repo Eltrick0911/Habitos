@@ -120,8 +120,9 @@ function cargarDatos() {
 
 function cargarUsuarios() {
     $.ajax({
-        url: '../../bd/crud_usuarios.php?operacion=consultar',
+        url: "http://localhost/Habitos/bd/crud_usuarios.php?operacion=consultar",
         type: 'GET',
+        dataType: 'json',
         success: function(response) {
             if(response.success && tablaUsuarios) {
                 tablaUsuarios.clear().rows.add(response.data).draw();
@@ -137,8 +138,9 @@ function cargarUsuarios() {
 
 function cargarHabitos() {
     $.ajax({
-        url: '../../bd/crud_habitos.php?operacion=consultar',
+        url: "http://localhost/Habitos/bd/crud_habitos.php?operacion=consultar",
         type: 'GET',
+        dataType: 'json',
         success: function(response) {
             if(response.success && tablaHabitos) {
                 tablaHabitos.clear().rows.add(response.data).draw();
@@ -154,8 +156,9 @@ function cargarHabitos() {
 
 function cargarComentarios() {
     $.ajax({
-        url: '../../bd/crud_comentarios.php?operacion=consultar',
+        url: "http://localhost/Habitos/bd/crud_comentarios.php?operacion=consultar",
         type: 'GET',
+        dataType: 'json',
         success: function(response) {
             if(response.success && tablaComentarios) {
                 tablaComentarios.clear().rows.add(response.data).draw();
@@ -191,22 +194,20 @@ function cargarUsuariosSelect() {
 
 function actualizarContadores() {
     $.ajax({
-        url: '../../bd/crud_contadores.php',
+        url: "http://localhost/Habitos/bd/crud_contadores.php",
         type: 'GET',
         dataType: 'json',
-        success: function(response) {
-            if (response.success && response.data) {
-                $('#totalUsuarios').text(response.data.usuarios || 0);
-                $('#totalHabitos').text(response.data.habitos || 0);
-                $('#totalComentarios').text(response.data.comentarios || 0);
+        success: function(data) {
+            if (data.success) {
+                $("#totalUsuarios").text(data.data.usuarios);
+                $("#totalHabitos").text(data.data.habitos);
+                $("#totalComentarios").text(data.data.comentarios);
             } else {
-                console.error('Error en la respuesta de contadores:', response);
-                mostrarError('Error al cargar contadores: ' + (response.message || 'Datos no válidos'));
+                console.error('Error en la respuesta:', data.message);
             }
         },
-        error: function(xhr, status, error) {
-            console.error('Error en la petición de contadores:', status, error);
-            mostrarError('Error en la conexión al cargar contadores');
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error('Error en la petición de contadores:', textStatus, errorThrown);
         }
     });
 }
