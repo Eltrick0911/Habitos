@@ -30,12 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT' || $_SERVER['REQUEST_METHOD'] == 'POST')
             header('HTTP/1.1 500 Error al actualizar el comentario!');
             echo json_encode(["error" => "Error al actualizar el comentario: " . $e->getMessage()]);
         }
-    } else {
-        header('HTTP/1.1 400 Faltan campos requeridos!');
-        echo json_encode([
-            "error" => "Faltan campos requeridos",
-            "campos_faltantes" => array_values($missing_fields)
-        ]);
     }
 } else {
     header('HTTP/1.1 405 Método no permitido!');
