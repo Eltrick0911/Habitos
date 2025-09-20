@@ -96,8 +96,7 @@ $(document).ready(function() {
         },
         error: function(xhr, status, error) {
           console.error('Error:', error);
-          console.error('Estado:', status);
-          console.error('Respuesta:', xhr.responseText);
+    ;
           let errorMessage = "Error al enviar el formulario";
           try {
             const response = JSON.parse(xhr.responseText);
